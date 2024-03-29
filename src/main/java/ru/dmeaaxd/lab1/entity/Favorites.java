@@ -1,5 +1,6 @@
 package ru.dmeaaxd.lab1.entity;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +9,10 @@ import lombok.Setter;
 @Table(name = "subscriptions")
 @Getter
 @Setter
-public class Subscription {
+public class Favorites {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subscriptionId;
+    private Long favoritesId;
 
     @ManyToOne
     @JoinColumn(name = "user_id_id")
@@ -22,12 +23,11 @@ public class Subscription {
     private Shop shop;
 
     // Конструкторы
-    public Subscription() {
+    public Favorites() {
     }
 
-    public Subscription(User user, Shop shop) {
+    public Favorites(User user, Shop shop) {
         this.user = user;
         this.shop = shop;
     }
-
 }
