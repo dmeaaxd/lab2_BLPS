@@ -20,6 +20,5 @@ public class Shop {
     private Long id;
     private String name;
     private String description;
-    private String password;
-    private int accountBill;
+    private int cashbackPercent;
 }
