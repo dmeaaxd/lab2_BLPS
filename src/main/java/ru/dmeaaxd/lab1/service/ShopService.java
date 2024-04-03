@@ -7,6 +7,7 @@ import ru.dmeaaxd.lab1.entity.Shop;
 import ru.dmeaaxd.lab1.repository.ShopRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +29,8 @@ public class ShopService {
     }
 
     public Shop getCurrent(Long id) {
-        return shopRepository.getReferenceById(id);
+        Optional<Shop> shop = shopRepository.findById(id);
+        return shop.orElse(null);
     }
+
 }
