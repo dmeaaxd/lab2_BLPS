@@ -27,7 +27,7 @@ public class ShopController {
 
 
     @GetMapping
-    public ResponseEntity<List<Shop>> getAll(@RequestBody ShopDTO shopDTO) {
+    public ResponseEntity<List<Shop>> getAll() {
         return new ResponseEntity<>(shopService.getAll(), HttpStatus.OK);
     }
 
