@@ -22,8 +22,10 @@ public class FavoriteService {
             return null;
         }
 
-        Client client = getClientById(clientId);
-        Shop shop = getShopById(shopId);
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Клиент: " + clientId + " не найден"));
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new IllegalArgumentException("Магазин: " + shopId + " не найден"));
 
         Favorite favorite = Favorite.builder()
                 .client(client)
@@ -31,15 +33,5 @@ public class FavoriteService {
                 .build();
 
         return favoriteRepository.save(favorite);
-    }
-
-    private Client getClientById(Long clientId) {
-        return clientRepository.findById(clientId)
-                .orElseThrow(() -> new IllegalArgumentException("Client not found with id: " + clientId));
-    }
-
-    private Shop getShopById(Long shopId) {
-        return shopRepository.findById(shopId)
-                .orElseThrow(() -> new IllegalArgumentException("Shop not found with id: " + shopId));
     }
 }

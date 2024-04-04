@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Favorite {
+public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -22,4 +22,6 @@ public class Favorite {
     @ManyToOne
     @JoinColumn(name = "shopId")
     private Shop shop;
+
+    private int duration;
 }

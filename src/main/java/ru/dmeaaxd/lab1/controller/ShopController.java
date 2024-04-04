@@ -6,10 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab1.dto.FavoriteDTO;
 import ru.dmeaaxd.lab1.dto.ShopDTO;
+import ru.dmeaaxd.lab1.dto.SubscriptionDTO;
 import ru.dmeaaxd.lab1.entity.Favorite;
 import ru.dmeaaxd.lab1.entity.Shop;
+import ru.dmeaaxd.lab1.entity.Subscription;
 import ru.dmeaaxd.lab1.service.FavoriteService;
 import ru.dmeaaxd.lab1.service.ShopService;
+import ru.dmeaaxd.lab1.service.SubscriptionService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,7 @@ public class ShopController {
 
     private final ShopService shopService;
     private final FavoriteService favoriteService;
+    private final SubscriptionService subscriptionService;
 
 
     @PostMapping("/create")
@@ -45,16 +49,34 @@ public class ShopController {
         Long clientId = favoriteDTO.getClientId();
         Long shopId = favoriteDTO.getShopId();
 
-        Favorite addedFavorite = favoriteService.addToFavorite(clientId, shopId);
+        Favorite favorite = favoriteService.addToFavorite(clientId, shopId);
 
         Map<String, String> response = new HashMap<>();
-        if (addedFavorite != null) {
-            response.put("message", "Магазин сохранен для клиента " + clientId + ", магазин: " + shopId);
+        if (favorite != null) {
+            response.put("message", "Магазин: " + shopId + " добавлен в избранное для клиента: " + clientId);
         } else {
-            response.put("message", "Магазин уже добавлен в избранное для клиента " + clientId);
+            response.put("error", "Магазин уже добавлен в избранное для клиента: " + clientId);
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("/subscribe")
+    public ResponseEntity<Map<String, String>> subscribe(@RequestBody SubscriptionDTO subscriptionDTO) {
+        Long clientId = subscriptionDTO.getClientId();
+        Long shopId = subscriptionDTO.getShopId();
+        int duration = subscriptionDTO.getDuration();
+
+        SubscriptionDTO subscribe = subscriptionService.subscribe(clientId, shopId, duration);
+
+        Map<String, String> response = new HashMap<>();
+        if (subscribe != null) {
+            response.put("message", "Подписка на магазин: " + shopId + " для клиента " + clientId + " оформлена / продлена на " + duration);
+        } else {
+            response.put("error", "У клиента: " + clientId + " недостаточно средств");
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 }
