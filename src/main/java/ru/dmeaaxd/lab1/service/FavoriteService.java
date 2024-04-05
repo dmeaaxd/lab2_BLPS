@@ -9,6 +9,8 @@ import ru.dmeaaxd.lab1.repository.ClientRepository;
 import ru.dmeaaxd.lab1.repository.FavoriteRepository;
 import ru.dmeaaxd.lab1.repository.ShopRepository;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class FavoriteService {
@@ -17,19 +19,27 @@ public class FavoriteService {
     private final ClientRepository clientRepository;
     private final ShopRepository shopRepository;
 
-    public Favorite addToFavorite(Long clientId, Long shopId) {
+    public Favorite addToFavorite(Long clientId, Long shopId) throws Exception {
         if (favoriteRepository.existsByClientIdAndShopId(clientId, shopId)) {
             return null;
         }
 
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new IllegalArgumentException("Клиент: " + clientId + " не найден"));
-        Shop shop = shopRepository.findById(shopId)
-                .orElseThrow(() -> new IllegalArgumentException("Магазин: " + shopId + " не найден"));
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+
+        if (optionalClient.isEmpty()) {
+            throw new Exception("Клиент: " + clientId + " не найден");
+        }
+
+
+        Optional<Shop> optionalShop = shopRepository.findById(shopId);
+        if (optionalShop.isEmpty()) {
+            throw new Exception("Магазин: " + shopId + " не найден");
+        }
+
 
         Favorite favorite = Favorite.builder()
-                .client(client)
-                .shop(shop)
+                .client(optionalClient.get())
+                .shop(optionalShop.get())
                 .build();
 
         return favoriteRepository.save(favorite);

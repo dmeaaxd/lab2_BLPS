@@ -6,4 +6,5 @@ import ru.dmeaaxd.lab1.entity.Shop;
 
 @Repository
 public interface ShopRepository extends JpaRepository<Shop, Long> {
+
 }

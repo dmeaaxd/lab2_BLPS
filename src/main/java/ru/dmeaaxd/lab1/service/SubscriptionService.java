@@ -11,6 +11,8 @@ import ru.dmeaaxd.lab1.repository.ClientRepository;
 import ru.dmeaaxd.lab1.repository.ShopRepository;
 import ru.dmeaaxd.lab1.repository.SubscriptionRepository;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class SubscriptionService {
@@ -20,12 +22,23 @@ public class SubscriptionService {
     private final ShopRepository shopRepository;
 
     @Transactional
-    public SubscriptionDTO subscribe(Long clientId, Long shopId, int duration) {
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new IllegalArgumentException("Клиент: " + clientId + " не найден"));
+    public SubscriptionDTO subscribe(Long clientId, Long shopId, int duration) throws Exception {
 
-        Shop shop = shopRepository.findById(shopId)
-                .orElseThrow(() -> new IllegalArgumentException("Магазин: " + shopId + " не найден"));
+        Optional<Client> optionalClient = clientRepository.findById(clientId);
+
+        if (optionalClient.isEmpty()) {
+            throw new Exception("Клиент: " + clientId + " не найден");
+        }
+
+
+        Optional<Shop> optionalShop = shopRepository.findById(shopId);
+        if (optionalShop.isEmpty()) {
+            throw new Exception("Магазин: " + shopId + " не найден");
+        }
+
+        Client client = optionalClient.get();
+        Shop shop = optionalShop.get();
+
 
         Subscription existingSubscription = subscriptionRepository.findByClientAndShop(client, shop);
         if (existingSubscription != null) {

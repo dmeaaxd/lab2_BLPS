@@ -28,28 +28,37 @@ public class ShopController {
     private final SubscriptionService subscriptionService;
 
 
-    @PostMapping("/create")
-    public ResponseEntity<Shop> register(@RequestBody ShopDTO shopDTO) {
-        return new ResponseEntity<>(shopService.create(shopDTO), HttpStatus.OK);
-    }
-
-
     @GetMapping
     public ResponseEntity<List<Shop>> getAll() {
         return new ResponseEntity<>(shopService.getAll(), HttpStatus.OK);
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<Shop> getCurrent(@PathVariable Long id) {
-        return new ResponseEntity<>(shopService.getCurrent(id), HttpStatus.OK);
+    public ResponseEntity<?> getCurrent(@PathVariable Long id) {
+
+        try {
+            return new ResponseEntity<>(shopService.getCurrent(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Такого магазина нет");
+        }
     }
 
     @PostMapping("/favorite")
-    public ResponseEntity<Map<String, String>> favoriteShop(@RequestBody FavoriteDTO favoriteDTO) {
+    public ResponseEntity<?> favoriteShop(@RequestBody FavoriteDTO favoriteDTO) {
         Long clientId = favoriteDTO.getClientId();
         Long shopId = favoriteDTO.getShopId();
 
-        Favorite favorite = favoriteService.addToFavorite(clientId, shopId);
+        if (favoriteDTO.antiChecker()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+        }
+
+        Favorite favorite;
+        try {
+            favorite = favoriteService.addToFavorite(clientId, shopId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
+        }
 
         Map<String, String> response = new HashMap<>();
         if (favorite != null) {
@@ -61,17 +70,27 @@ public class ShopController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     @PostMapping("/subscribe")
-    public ResponseEntity<Map<String, String>> subscribe(@RequestBody SubscriptionDTO subscriptionDTO) {
+    public ResponseEntity<?> subscribe(@RequestBody SubscriptionDTO subscriptionDTO) {
         Long clientId = subscriptionDTO.getClientId();
         Long shopId = subscriptionDTO.getShopId();
         int duration = subscriptionDTO.getDuration();
 
-        SubscriptionDTO subscribe = subscriptionService.subscribe(clientId, shopId, duration);
+        if (subscriptionDTO.antiChecker()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+        }
+
+        SubscriptionDTO subscribe = null;
+        try {
+            subscribe = subscriptionService.subscribe(clientId, shopId, duration);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
+        }
 
         Map<String, String> response = new HashMap<>();
         if (subscribe != null) {
-            response.put("message", "Подписка на магазин: " + shopId + " для клиента " + clientId + " оформлена / продлена на " + duration);
+            response.put("message", "Подписка на магазин: " + shopId + " для клиента " + clientId + " оформлена/продлена на " + duration);
         } else {
             response.put("error", "У клиента: " + clientId + " недостаточно средств");
         }

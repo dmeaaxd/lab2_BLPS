@@ -19,14 +19,32 @@ public class AuthController {
     private final ClientService clientService;
 
     @PostMapping("/register")
-    public ResponseEntity<Client> register(@RequestBody ClientDTO clientDTO) {
-        return new ResponseEntity<>(clientService.register(clientDTO), HttpStatus.OK);
+    public ResponseEntity<?> register(@RequestBody ClientDTO clientDTO) {
+
+        if (clientDTO.antiCheckerRegister()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+        }
+
+        try {
+            return new ResponseEntity<>(clientService.register(clientDTO), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Пользователь с данным username уже есть: " + clientDTO.getUsername());
+        }
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<Client> login(@RequestBody ClientDTO clientDTO) {
-        return new ResponseEntity<>(clientService.login(clientDTO), HttpStatus.OK);
+    public ResponseEntity<?> login(@RequestBody ClientDTO clientDTO) {
+
+        if (clientDTO.antiCheckerLogin()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+        }
+
+        try {
+            return new ResponseEntity<>(clientService.login(clientDTO), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неверный логин или пароль");
+        }
     }
 
 }

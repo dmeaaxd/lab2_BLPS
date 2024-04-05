@@ -7,13 +7,15 @@ import ru.dmeaaxd.lab1.dto.ClientDTO;
 import ru.dmeaaxd.lab1.entity.Client;
 import ru.dmeaaxd.lab1.repository.ClientRepository;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class ClientService {
 
     private final ClientRepository clientRepository;
 
-    public Client register(ClientDTO clientDTO) {
+    public Client register(ClientDTO clientDTO) throws Exception {
         Client newClient = Client.builder()
                 .username(clientDTO.getUsername())
                 .email(clientDTO.getEmail())
@@ -21,18 +23,24 @@ public class ClientService {
                 .accountBill(clientDTO.getAccountBill())
                 .build();
 
+        if (clientRepository.findByUsername(newClient.getUsername()).isPresent()) {
+            throw new Exception("Это имя пользователя уже занято");
+        }
+
         return clientRepository.save(newClient);
     }
 
-    public Client login(ClientDTO clientDTO) {
-        Client client = clientRepository.findByUsername(clientDTO.getUsername());
+    public Client login(ClientDTO clientDTO) throws Exception {
+        Optional<Client> oldClient = clientRepository.findByUsername(clientDTO.getUsername());
 
-        if (client == null) {
-            throw new RuntimeException("Пользователь с указанным именем не найден");
+        if (!oldClient.isPresent()) {
+            throw new Exception("Пользователь с указанным именем не найден");
         }
 
+        Client client = oldClient.get();
+
         if (!client.getPassword().equals(clientDTO.getPassword())) {
-            throw new RuntimeException("Неправильный пароль");
+            throw new Exception("Неправильный пароль");
         }
 
         return client;
