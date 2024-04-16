@@ -28,6 +28,17 @@ public class ShopController {
     private final SubscriptionService subscriptionService;
 
 
+    @PostMapping("/create")
+    public ResponseEntity<?> register(@RequestBody ShopDTO shopDTO) {
+
+        if (shopDTO.antiCheckerRegister()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
+        }
+
+        return new ResponseEntity<>(shopService.create(shopDTO), HttpStatus.OK);
+    }
+
+
     @GetMapping
     public ResponseEntity<List<Shop>> getAll() {
         return new ResponseEntity<>(shopService.getAll(), HttpStatus.OK);
@@ -50,7 +61,7 @@ public class ShopController {
         Long shopId = favoriteDTO.getShopId();
 
         if (favoriteDTO.antiChecker()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 
         Favorite favorite;
@@ -78,7 +89,7 @@ public class ShopController {
         int duration = subscriptionDTO.getDuration();
 
         if (subscriptionDTO.antiChecker()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 
         SubscriptionDTO subscribe = null;

@@ -15,6 +15,15 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
 
+    public Shop create(ShopDTO shopDTO) {
+        Shop newShop = Shop.builder()
+                .name(shopDTO.getName())
+                .description(shopDTO.getDescription())
+                .cashbackPercent(shopDTO.getCashbackPercent())
+                .build();
+        return shopRepository.save(newShop);
+    }
+
     public List<Shop> getAll() {
         return shopRepository.findAll();
     }

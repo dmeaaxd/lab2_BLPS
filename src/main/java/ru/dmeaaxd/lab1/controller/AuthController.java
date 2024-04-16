@@ -22,7 +22,7 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody ClientDTO clientDTO) {
 
         if (clientDTO.antiCheckerRegister()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 
         try {
@@ -37,7 +37,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody ClientDTO clientDTO) {
 
         if (clientDTO.antiCheckerLogin()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Переданы неверные параметры в запросе");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 
         try {
