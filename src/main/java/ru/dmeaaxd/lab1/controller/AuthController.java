@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.dmeaaxd.lab1.dto.ClientDTO;
-import ru.dmeaaxd.lab1.entity.Client;
 import ru.dmeaaxd.lab1.service.ClientService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,14 +23,18 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody ClientDTO clientDTO) {
 
+        Map<String, String> response = new HashMap<>();
+
         if (clientDTO.antiCheckerRegister()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
+            response.put("error", "Переданы неверные параметры в запросе");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
         try {
             return new ResponseEntity<>(clientService.register(clientDTO), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Пользователь с данным username уже есть: " + clientDTO.getUsername());
+            response.put("error", "Пользователь с данным username уже есть: " + clientDTO.getUsername());
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -36,15 +42,19 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody ClientDTO clientDTO) {
 
+        Map<String, String> response = new HashMap<>();
+
         if (clientDTO.antiCheckerLogin()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
+            response.put("error", "Переданы неверные параметры в запросе");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
         }
 
         try {
             return new ResponseEntity<>(clientService.login(clientDTO), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неверный логин или пароль");
+            response.put("error", "Неверный логин или пароль");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
-
 }

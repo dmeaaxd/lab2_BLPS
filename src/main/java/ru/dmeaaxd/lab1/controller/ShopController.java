@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab1.dto.FavoriteDTO;
+import ru.dmeaaxd.lab1.dto.FavoritesRequestDTO;
 import ru.dmeaaxd.lab1.dto.ShopDTO;
 import ru.dmeaaxd.lab1.dto.SubscriptionDTO;
+import ru.dmeaaxd.lab1.dto.SubscriptionRequestDTO;
 import ru.dmeaaxd.lab1.entity.Favorite;
 import ru.dmeaaxd.lab1.entity.Shop;
-import ru.dmeaaxd.lab1.entity.Subscription;
 import ru.dmeaaxd.lab1.service.FavoriteService;
 import ru.dmeaaxd.lab1.service.ShopService;
 import ru.dmeaaxd.lab1.service.SubscriptionService;
@@ -29,7 +29,12 @@ public class ShopController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<?> register(@RequestBody ShopDTO shopDTO) {
+    public ResponseEntity<?> register(@RequestBody ShopDTO shopDTO,
+                                      @RequestHeader(value = "Auth", required = false) Long clientId) {
+
+        if (clientId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         if (shopDTO.antiCheckerRegister()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
@@ -56,11 +61,16 @@ public class ShopController {
     }
 
     @PostMapping("/favorite")
-    public ResponseEntity<?> favoriteShop(@RequestBody FavoriteDTO favoriteDTO) {
-        Long clientId = favoriteDTO.getClientId();
-        Long shopId = favoriteDTO.getShopId();
+    public ResponseEntity<?> favoriteShop(@RequestBody FavoritesRequestDTO favoritesRequestDTO,
+                                          @RequestHeader(value = "Auth", required = false) Long clientId) {
 
-        if (favoriteDTO.antiChecker()) {
+        if (clientId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Long shopId = favoritesRequestDTO.getShopId();
+
+        if (favoritesRequestDTO.antiChecker()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 
@@ -83,12 +93,17 @@ public class ShopController {
 
 
     @PostMapping("/subscribe")
-    public ResponseEntity<?> subscribe(@RequestBody SubscriptionDTO subscriptionDTO) {
-        Long clientId = subscriptionDTO.getClientId();
-        Long shopId = subscriptionDTO.getShopId();
-        int duration = subscriptionDTO.getDuration();
+    public ResponseEntity<?> subscribe(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
+                                       @RequestHeader(value = "Auth", required = false) Long clientId) {
 
-        if (subscriptionDTO.antiChecker()) {
+        if (clientId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Long shopId = subscriptionRequestDTO.getShopId();
+        int duration = subscriptionRequestDTO.getDuration();
+
+        if (subscriptionRequestDTO.antiChecker()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 

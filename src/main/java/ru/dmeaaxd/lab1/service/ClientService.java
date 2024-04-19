@@ -15,7 +15,7 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
 
-    public Client register(ClientDTO clientDTO) throws Exception {
+    public Long register(ClientDTO clientDTO) throws Exception {
         Client newClient = Client.builder()
                 .username(clientDTO.getUsername())
                 .email(clientDTO.getEmail())
@@ -27,10 +27,13 @@ public class ClientService {
             throw new Exception("Это имя пользователя уже занято");
         }
 
-        return clientRepository.save(newClient);
+        clientRepository.save(newClient);
+
+        return newClient.getId();
     }
 
-    public Client login(ClientDTO clientDTO) throws Exception {
+
+    public Long login(ClientDTO clientDTO) throws Exception {
         Optional<Client> oldClient = clientRepository.findByUsername(clientDTO.getUsername());
 
         if (!oldClient.isPresent()) {
@@ -43,7 +46,7 @@ public class ClientService {
             throw new Exception("Неправильный пароль");
         }
 
-        return client;
+        return client.getId();
     }
 
 }
