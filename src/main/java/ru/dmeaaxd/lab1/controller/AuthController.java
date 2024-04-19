@@ -31,7 +31,9 @@ public class AuthController {
         }
 
         try {
-            return new ResponseEntity<>(clientService.register(clientDTO), HttpStatus.OK);
+            response.put("clientId", String.valueOf(clientService.register(clientDTO)));
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
         } catch (Exception e) {
             response.put("error", "Пользователь с данным username уже есть: " + clientDTO.getUsername());
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
@@ -47,11 +49,12 @@ public class AuthController {
         if (clientDTO.antiCheckerLogin()) {
             response.put("error", "Переданы неверные параметры в запросе");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-
         }
 
         try {
-            return new ResponseEntity<>(clientService.login(clientDTO), HttpStatus.OK);
+            response.put("clientId", String.valueOf(clientService.login(clientDTO)));
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
         } catch (Exception e) {
             response.put("error", "Неверный логин или пароль");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
