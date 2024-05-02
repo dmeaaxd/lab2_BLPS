@@ -68,7 +68,7 @@ public class FavoriteController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            response.put("favoriteId", "Удалено" + favoriteService.remove(id));
+            response.put("favoriteId", String.valueOf(favoriteService.remove(id)));
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
