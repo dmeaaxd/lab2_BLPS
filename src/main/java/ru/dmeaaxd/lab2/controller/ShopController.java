@@ -20,6 +20,7 @@ public class ShopController {
 
     private final ShopService shopService;
 
+    // TODO: Добавить фильтрацию
     @GetMapping
     public ResponseEntity<List<ShopGetAllViewDTO>> getAll() {
         return new ResponseEntity<>(shopService.getAll(), HttpStatus.OK);
