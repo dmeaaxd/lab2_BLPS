@@ -12,16 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Column(unique = true)
-    private String username;
-    private String email;
-    private String password;
+    private int accountBill;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "billId")
-    private Bill accountBill;
+    @OneToOne
+    @JoinColumn(name = "clientId")
+    private Client client;
 }
