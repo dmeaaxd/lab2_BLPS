@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.CategoryDTO;
+import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
 import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.service.CategoryService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -16,7 +18,14 @@ import java.util.Map;
 @RequestMapping("/category")
 @AllArgsConstructor
 public class CategoryController {
+
     CategoryService categoryService;
+
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getAll() {
+        return new ResponseEntity<>(categoryService.getAll(), HttpStatus.OK);
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CategoryDTO categoryDTO,
@@ -68,7 +77,7 @@ public class CategoryController {
     }
 
     @PostMapping("/{id}/delete")
-    public ResponseEntity<?> update(@PathVariable Long id,
+    public ResponseEntity<?> delete(@PathVariable Long id,
                                     @RequestHeader(value = "Auth", required = false) Long clientId)  {
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

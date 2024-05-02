@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.dmeaaxd.lab2.dto.CategoryDTO;
+import ru.dmeaaxd.lab2.dto.FavoriteDTO;
 import ru.dmeaaxd.lab2.dto.FavoritesRequestDTO;
 import ru.dmeaaxd.lab2.entity.Favorite;
 import ru.dmeaaxd.lab2.service.FavoriteService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,6 +20,11 @@ import java.util.Map;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
+
+    @GetMapping
+    public ResponseEntity<List<FavoriteDTO>> getAll() {
+        return new ResponseEntity<>(favoriteService.getAll(), HttpStatus.OK);
+    }
 
 
     @PostMapping("/add")
@@ -35,7 +43,7 @@ public class FavoriteController {
 
         Favorite favorite;
         try {
-            favorite = favoriteService.addToFavorite(clientId, shopId);
+            favorite = favoriteService.add(clientId, shopId);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
         }
@@ -48,5 +56,24 @@ public class FavoriteController {
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/remove")
+    public ResponseEntity<?> remove(@PathVariable Long id,
+                                    @RequestHeader(value = "Auth", required = false) Long clientId)  {
+        if (clientId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            response.put("favoriteId", "Удалено" + favoriteService.remove(id));
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+            response.put("error", "Магазина с данным ID не существует: " + id);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 }
