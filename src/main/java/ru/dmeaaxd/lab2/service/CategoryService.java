@@ -2,11 +2,17 @@ package ru.dmeaaxd.lab2.service;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.stereotype.Service;
 import ru.dmeaaxd.lab2.dto.CategoryDTO;
+import ru.dmeaaxd.lab2.dto.ClientDTO;
 import ru.dmeaaxd.lab2.entity.Category;
+import ru.dmeaaxd.lab2.entity.Client;
+import ru.dmeaaxd.lab2.entity.Favorite;
 import ru.dmeaaxd.lab2.repository.CategoryRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,5 +70,17 @@ public class CategoryService {
         categoryRepository.delete(category);
 
         return category.getId();
+    }
+
+    public List<CategoryDTO> getAll() {
+
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+
+        for (Category category : categoryRepository.findAll()) {
+            categoryDTOList.add(CategoryDTO.builder()
+                            .name(category.getName())
+                            .build());
+        }
+        return categoryDTOList;
     }
 }
