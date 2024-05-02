@@ -75,7 +75,7 @@ public class ShopService {
                 .build();
     }
 
-    public Shop create(ShopDTO shopDTO) {
+    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException{
         Shop newShop = Shop.builder()
                 .name(shopDTO.getName())
                 .description(shopDTO.getDescription())

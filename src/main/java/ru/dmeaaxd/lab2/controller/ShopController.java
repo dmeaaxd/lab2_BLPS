@@ -12,7 +12,9 @@ import ru.dmeaaxd.lab2.service.FavoriteService;
 import ru.dmeaaxd.lab2.service.ShopService;
 import ru.dmeaaxd.lab2.service.SubscriptionService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/shop")
@@ -30,52 +32,66 @@ public class ShopController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCurrent(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
 
         try {
             return new ResponseEntity<>(shopService.getCurrent(id), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Такого магазина нет");
+            response.put("error", "Такого магазина нет");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ShopDTO shopDTO,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
+        Map<String, String> response = new HashMap<>();
 
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         if (shopDTO.antiCheckerRegister()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
+            response.put("error", "Переданы неверные параметры в запросе");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(shopService.create(shopDTO), HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(shopService.create(shopDTO), HttpStatus.OK);
+        }
+        catch (ObjectNotFoundException exception){
+            response.put("error", "Такой категории нет (id=" + exception.getIdentifier() + ")");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestBody ShopDTO shopDTO,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
+        Map<String, String> response = new HashMap<>();
 
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         if (shopDTO.antiCheckerRegister()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
+            response.put("error", "Переданы неверные параметры в запросе");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
         try {
             return new ResponseEntity<>(shopService.update(id, shopDTO), HttpStatus.OK);
         } catch (ObjectNotFoundException exception) {
-            return new ResponseEntity<>("Магазин не найден", HttpStatus.OK);
+            response.put("error", "Такого магазина нет");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> delete(@PathVariable Long id,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
+        Map<String, String> response = new HashMap<>();
 
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -85,7 +101,8 @@ public class ShopController {
             shopService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ObjectNotFoundException exception) {
-            return new ResponseEntity<>("Магазин не найден", HttpStatus.OK);
+            response.put("error", "Такого магазина нет");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
