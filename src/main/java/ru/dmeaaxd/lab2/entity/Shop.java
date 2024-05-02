@@ -19,7 +19,7 @@ public class Shop {
     private Long id;
     private String name;
     private String description;
-    private int cashbackPercent;
+
     @OneToMany
     @JoinColumn(name = "discountId")
     private List<Discount> discounts;
