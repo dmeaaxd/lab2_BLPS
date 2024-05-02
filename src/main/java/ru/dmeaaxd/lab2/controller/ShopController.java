@@ -29,7 +29,7 @@ public class ShopController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<?> register(@RequestBody ShopDTO shopDTO,
+    public ResponseEntity<?> create(@RequestBody ShopDTO shopDTO,
                                       @RequestHeader(value = "Auth", required = false) Long clientId) {
 
         if (clientId == null) {
