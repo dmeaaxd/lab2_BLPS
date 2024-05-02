@@ -1,26 +1,29 @@
 package ru.dmeaaxd.lab2.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Shop {
+public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String name;
-    private String description;
-    private int cashbackPercent;
-    @OneToMany
-    @JoinColumn(name = "discountId")
-    private List<Discount> discount;
+
+    @ManyToOne
+    @JoinColumn(name = "shopId")
+    private Shop shop;
+
+    String title;
+
+    String description;
+
+    String promoCode;
 }
