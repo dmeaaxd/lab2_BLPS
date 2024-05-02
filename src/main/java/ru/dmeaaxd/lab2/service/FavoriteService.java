@@ -49,14 +49,16 @@ public class FavoriteService {
     }
 
 
-    public List<FavoriteDTO> getAll() {
+    public List<FavoriteDTO> getFavorites(Long clientId) {
+        List<Favorite> favoriteList = favoriteRepository.findAllByClientId(clientId);
         List<FavoriteDTO> favoriteDTOList = new ArrayList<>();
-
-        for (Favorite favorite : favoriteRepository.findAll()) {
+        for (Favorite favorite : favoriteList) {
             favoriteDTOList.add(FavoriteDTO.builder()
-                    .shopId(favorite.getShop().getId())
-                    .build());
+                            .clientId(favorite.getClient().getId())
+                            .shopId(favorite.getShop().getId())
+                            .build());
         }
+
         return favoriteDTOList;
     }
 

@@ -21,26 +21,30 @@ public class PaymentController {
     private final BillService billService;
 
 
-    @PostMapping ("/bill")
-    public ResponseEntity<?> getBill(Long id) {
+    @GetMapping ("/bill")
+    public ResponseEntity<?> getBill(@RequestHeader(value = "Auth", required = false) Long clientId) {
+
+        if (clientId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         Map<String, String> response = new HashMap<>();
 
         try {
 
-            response.put("bill", String.valueOf(billService.getBill(id)));
+            response.put("bill", String.valueOf(billService.getBill(clientId)));
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.put("bill", "Клиент с данным ID не найден: " + id);
+            response.put("bill", "Клиент с данным ID не найден: " + clientId);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/topUp")
     public ResponseEntity<?> topUp(@RequestParam Long id,
-                                         @RequestParam int amount,
-                                         @RequestHeader(value = "Auth", required = false) Long clientId) {
+                                   @RequestParam int amount,
+                                   @RequestHeader(value = "Auth", required = false) Long clientId) {
 
 
         if (clientId == null) {

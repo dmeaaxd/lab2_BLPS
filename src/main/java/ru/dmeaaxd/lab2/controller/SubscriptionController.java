@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.dmeaaxd.lab2.dto.FavoriteDTO;
 import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
 import ru.dmeaaxd.lab2.dto.SubscriptionRequestDTO;
+import ru.dmeaaxd.lab2.entity.Subscription;
 import ru.dmeaaxd.lab2.service.SubscriptionService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,6 +21,11 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
+
+    @GetMapping
+    public ResponseEntity<List<SubscriptionDTO>> getSubscriptions(@RequestHeader(value = "Auth", required = false) Long clientId) {
+        return new ResponseEntity<>(subscriptionService.getSubscriptions(clientId), HttpStatus.OK);
+    }
 
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
@@ -51,4 +59,6 @@ public class SubscriptionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+
 }

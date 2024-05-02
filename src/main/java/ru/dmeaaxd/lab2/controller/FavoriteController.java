@@ -22,9 +22,16 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @GetMapping
-    public ResponseEntity<List<FavoriteDTO>> getAll() {
-        return new ResponseEntity<>(favoriteService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<FavoriteDTO>> getAll(@RequestHeader(value = "Auth", required = false) Long clientId) {
+
+        if (clientId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return new ResponseEntity<>(favoriteService.getFavorites(clientId), HttpStatus.OK);
     }
+
+
 
 
     @PostMapping("/add")
