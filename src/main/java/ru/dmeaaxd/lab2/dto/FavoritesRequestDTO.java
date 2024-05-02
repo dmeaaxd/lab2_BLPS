@@ -1,9 +1,7 @@
-package ru.dmeaaxd.lab1.dto;
+package ru.dmeaaxd.lab2.dto;
 
 import lombok.Data;
 import lombok.Getter;
-import ru.dmeaaxd.lab1.entity.Client;
-import ru.dmeaaxd.lab1.entity.Shop;
 
 @Data
 @Getter

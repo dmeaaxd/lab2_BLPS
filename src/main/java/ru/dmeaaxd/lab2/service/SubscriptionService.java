@@ -1,15 +1,15 @@
-package ru.dmeaaxd.lab1.service;
+package ru.dmeaaxd.lab2.service;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab1.dto.SubscriptionDTO;
-import ru.dmeaaxd.lab1.entity.Client;
-import ru.dmeaaxd.lab1.entity.Shop;
-import ru.dmeaaxd.lab1.entity.Subscription;
-import ru.dmeaaxd.lab1.repository.ClientRepository;
-import ru.dmeaaxd.lab1.repository.ShopRepository;
-import ru.dmeaaxd.lab1.repository.SubscriptionRepository;
+import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
+import ru.dmeaaxd.lab2.entity.Client;
+import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.entity.Subscription;
+import ru.dmeaaxd.lab2.repository.ClientRepository;
+import ru.dmeaaxd.lab2.repository.ShopRepository;
+import ru.dmeaaxd.lab2.repository.SubscriptionRepository;
 
 import java.util.Optional;
 

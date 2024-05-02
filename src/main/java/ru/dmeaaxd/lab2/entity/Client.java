@@ -1,4 +1,4 @@
-package ru.dmeaaxd.lab1.entity;
+package ru.dmeaaxd.lab2.entity;
 
 
 import jakarta.persistence.*;

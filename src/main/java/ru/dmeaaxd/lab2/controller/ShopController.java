@@ -1,18 +1,18 @@
-package ru.dmeaaxd.lab1.controller;
+package ru.dmeaaxd.lab2.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab1.dto.FavoritesRequestDTO;
-import ru.dmeaaxd.lab1.dto.ShopDTO;
-import ru.dmeaaxd.lab1.dto.SubscriptionDTO;
-import ru.dmeaaxd.lab1.dto.SubscriptionRequestDTO;
-import ru.dmeaaxd.lab1.entity.Favorite;
-import ru.dmeaaxd.lab1.entity.Shop;
-import ru.dmeaaxd.lab1.service.FavoriteService;
-import ru.dmeaaxd.lab1.service.ShopService;
-import ru.dmeaaxd.lab1.service.SubscriptionService;
+import ru.dmeaaxd.lab2.dto.FavoritesRequestDTO;
+import ru.dmeaaxd.lab2.dto.ShopDTO;
+import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
+import ru.dmeaaxd.lab2.dto.SubscriptionRequestDTO;
+import ru.dmeaaxd.lab2.entity.Favorite;
+import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.service.FavoriteService;
+import ru.dmeaaxd.lab2.service.ShopService;
+import ru.dmeaaxd.lab2.service.SubscriptionService;
 
 import java.util.HashMap;
 import java.util.List;

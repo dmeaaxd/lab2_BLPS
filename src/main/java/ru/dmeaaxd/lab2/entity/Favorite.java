@@ -1,4 +1,4 @@
-package ru.dmeaaxd.lab1.entity;
+package ru.dmeaaxd.lab2.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Subscription {
+public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -22,6 +22,4 @@ public class Subscription {
     @ManyToOne
     @JoinColumn(name = "shopId")
     private Shop shop;
-
-    private int duration;
 }

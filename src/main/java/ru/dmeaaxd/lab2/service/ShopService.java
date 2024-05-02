@@ -1,10 +1,10 @@
-package ru.dmeaaxd.lab1.service;
+package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab1.dto.ShopDTO;
-import ru.dmeaaxd.lab1.entity.Shop;
-import ru.dmeaaxd.lab1.repository.ShopRepository;
+import ru.dmeaaxd.lab2.dto.ShopDTO;
+import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.repository.ShopRepository;
 
 import java.util.List;
 import java.util.Optional;

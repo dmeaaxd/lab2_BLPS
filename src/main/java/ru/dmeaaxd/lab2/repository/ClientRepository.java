@@ -1,9 +1,9 @@
-package ru.dmeaaxd.lab1.repository;
+package ru.dmeaaxd.lab2.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.dmeaaxd.lab1.entity.Client;
+import ru.dmeaaxd.lab2.entity.Client;
 
 import java.util.Optional;
 

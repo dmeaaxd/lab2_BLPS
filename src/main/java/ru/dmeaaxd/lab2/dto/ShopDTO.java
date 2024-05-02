@@ -1,4 +1,4 @@
-package ru.dmeaaxd.lab1.dto;
+package ru.dmeaaxd.lab2.dto;
 
 import lombok.Data;
 

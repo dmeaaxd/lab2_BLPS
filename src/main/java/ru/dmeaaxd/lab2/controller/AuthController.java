@@ -1,4 +1,4 @@
-package ru.dmeaaxd.lab1.controller;
+package ru.dmeaaxd.lab2.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.dmeaaxd.lab1.dto.ClientDTO;
-import ru.dmeaaxd.lab1.service.ClientService;
+import ru.dmeaaxd.lab2.dto.ClientDTO;
+import ru.dmeaaxd.lab2.service.ClientService;
 
 import java.util.HashMap;
 import java.util.Map;

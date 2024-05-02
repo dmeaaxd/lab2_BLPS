@@ -1,13 +1,13 @@
-package ru.dmeaaxd.lab1.service;
+package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab1.entity.Client;
-import ru.dmeaaxd.lab1.entity.Favorite;
-import ru.dmeaaxd.lab1.entity.Shop;
-import ru.dmeaaxd.lab1.repository.ClientRepository;
-import ru.dmeaaxd.lab1.repository.FavoriteRepository;
-import ru.dmeaaxd.lab1.repository.ShopRepository;
+import ru.dmeaaxd.lab2.entity.Client;
+import ru.dmeaaxd.lab2.entity.Favorite;
+import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.repository.ClientRepository;
+import ru.dmeaaxd.lab2.repository.FavoriteRepository;
+import ru.dmeaaxd.lab2.repository.ShopRepository;
 
 import java.util.Optional;
 
