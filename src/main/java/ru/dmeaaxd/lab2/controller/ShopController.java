@@ -5,7 +5,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.ShopDTO;
+import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.service.FavoriteService;
 import ru.dmeaaxd.lab2.service.ShopService;

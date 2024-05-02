@@ -3,7 +3,7 @@ package ru.dmeaaxd.lab2.service;
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab2.dto.ShopDTO;
+import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.repository.CategoryRepository;

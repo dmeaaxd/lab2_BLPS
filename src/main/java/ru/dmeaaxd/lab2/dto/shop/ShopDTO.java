@@ -1,4 +1,4 @@
-package ru.dmeaaxd.lab2.dto;
+package ru.dmeaaxd.lab2.dto.shop;
 
 import lombok.Builder;
 import lombok.Data;
