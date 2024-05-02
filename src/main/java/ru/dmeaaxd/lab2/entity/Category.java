@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -19,7 +21,7 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "shopId")
-    private Shop shop;
+    private List<Shop> shops;
 
     String name;
 }
