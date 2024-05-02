@@ -20,7 +20,6 @@ public class ClientService {
                 .username(clientDTO.getUsername())
                 .email(clientDTO.getEmail())
                 .password(clientDTO.getPassword())
-                .accountBill(clientDTO.getAccountBill())
                 .build();
 
         if (clientRepository.findByUsername(newClient.getUsername()).isPresent()) {

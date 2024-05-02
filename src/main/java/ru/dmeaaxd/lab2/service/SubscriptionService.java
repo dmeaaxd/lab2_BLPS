@@ -51,12 +51,12 @@ public class SubscriptionService {
                     .build();
         }
 
-        int totalPrice = duration * 10;
-        if (client.getAccountBill() >= totalPrice) {
-            client.setAccountBill(client.getAccountBill() - totalPrice);
-        } else {
-            return null;
-        }
+//        int totalPrice = duration * 10;
+//        if (client.getAccountBill() >= totalPrice) {
+//            client.setAccountBill(client.getAccountBill() - totalPrice);
+//        } else {
+//            return null;
+//        }
 
         clientRepository.save(client);
         subscriptionRepository.save(existingSubscription);

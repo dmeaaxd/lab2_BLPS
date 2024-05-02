@@ -7,7 +7,6 @@ public class ClientDTO {
     private String username;
     private String email;
     private String password;
-    private int accountBill;
 
     public boolean antiCheckerRegister() {
         if (username == null || username.isEmpty()) return true;
