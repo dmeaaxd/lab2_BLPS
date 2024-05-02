@@ -3,8 +3,13 @@ package ru.dmeaaxd.lab2.service;
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.dmeaaxd.lab2.dto.CategoryDTO;
+import ru.dmeaaxd.lab2.dto.DiscountDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
+import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
+import ru.dmeaaxd.lab2.dto.shop.ShopGetCurrentViewDTO;
 import ru.dmeaaxd.lab2.entity.Category;
+import ru.dmeaaxd.lab2.entity.Discount;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.repository.CategoryRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
@@ -20,18 +25,54 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final CategoryRepository categoryRepository;
 
-    public List<Shop> getAll() {
-        return shopRepository.findAll();
+    public List<ShopGetAllViewDTO> getAll() {
+        List<ShopGetAllViewDTO> shopGetAllViewDTOList = new ArrayList<>();
+
+        for (Shop shop : shopRepository.findAll()){
+            List<Category> categories = shop.getCategories();
+            List<CategoryDTO> categoryDTOList = new ArrayList<>();
+            for (Category category : categories){
+                categoryDTOList.add(CategoryDTO.builder()
+                        .name(category.getName())
+                        .build());
+            }
+
+            shopGetAllViewDTOList.add(ShopGetAllViewDTO.builder()
+                    .name(shop.getName())
+                    .description(shop.getDescription())
+                    .categories(categoryDTOList)
+                    .build());
+        }
+        return shopGetAllViewDTOList;
     }
 
-    public Shop getCurrent(Long id) throws Exception {
-        Optional<Shop> shop = shopRepository.findById(id);
+    public ShopGetCurrentViewDTO getCurrent(Long id) throws Exception {
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
 
-        if (!shop.isPresent()) {
-            throw new Exception("Такого магазина нет");
+        List<Category> categories = shop.getCategories();
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        for (Category category : categories){
+            categoryDTOList.add(CategoryDTO.builder()
+                    .name(category.getName())
+                    .build());
         }
 
-        return shop.get();
+        List<Discount> discounts = shop.getDiscounts();
+        List<DiscountDTO> discountDTOList = new ArrayList<>();
+        for (Discount discount : discounts){
+            discountDTOList.add(DiscountDTO.builder()
+                    .title(discount.getTitle())
+                    .description(discount.getDescription())
+                    .promoCode(discount.getPromoCode())
+                    .build());
+        }
+
+        return ShopGetCurrentViewDTO.builder()
+                .name(shop.getName())
+                .description(shop.getDescription())
+                .categories(categoryDTOList)
+                .discounts(discountDTOList)
+                .build();
     }
 
     public Shop create(ShopDTO shopDTO) {

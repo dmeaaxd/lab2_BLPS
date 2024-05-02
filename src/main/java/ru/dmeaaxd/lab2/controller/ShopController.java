@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
+import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.service.FavoriteService;
 import ru.dmeaaxd.lab2.service.ShopService;
@@ -23,7 +24,7 @@ public class ShopController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping
-    public ResponseEntity<List<Shop>> getAll() {
+    public ResponseEntity<List<ShopGetAllViewDTO>> getAll() {
         return new ResponseEntity<>(shopService.getAll(), HttpStatus.OK);
     }
 
