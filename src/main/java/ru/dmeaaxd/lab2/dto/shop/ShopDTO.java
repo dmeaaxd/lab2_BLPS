@@ -10,7 +10,7 @@ import java.util.List;
 public class ShopDTO {
     private String name;
     private String description;
-    private List<Long> categories;
+    private Long categoryId;
 
     public boolean antiCheckerRegister() {
         if (name == null || name.isEmpty()) return true;

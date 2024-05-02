@@ -13,6 +13,6 @@ import java.util.List;
 public class ShopGetCurrentViewDTO {
     private String name;
     private String description;
-    private List<CategoryDTO> categories;
+    private CategoryDTO category;
     private List<DiscountDTO> discounts;
 }

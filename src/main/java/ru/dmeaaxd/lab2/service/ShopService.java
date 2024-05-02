@@ -28,18 +28,15 @@ public class ShopService {
         List<ShopGetAllViewDTO> shopGetAllViewDTOList = new ArrayList<>();
 
         for (Shop shop : shopRepository.findAll()){
-            List<Category> categories = shop.getCategories();
-            List<CategoryDTO> categoryDTOList = new ArrayList<>();
-            for (Category category : categories){
-                categoryDTOList.add(CategoryDTO.builder()
-                        .name(category.getName())
-                        .build());
-            }
+            Category category = shop.getCategory();
+            CategoryDTO categoryDTO = CategoryDTO.builder()
+                    .name(category.getName())
+                    .build();
 
             shopGetAllViewDTOList.add(ShopGetAllViewDTO.builder()
                     .name(shop.getName())
                     .description(shop.getDescription())
-                    .categories(categoryDTOList)
+                    .category(categoryDTO)
                     .build());
         }
         return shopGetAllViewDTOList;
@@ -47,14 +44,6 @@ public class ShopService {
 
     public ShopGetCurrentViewDTO getCurrent(Long id) throws Exception {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
-
-        List<Category> categories = shop.getCategories();
-        List<CategoryDTO> categoryDTOList = new ArrayList<>();
-        for (Category category : categories){
-            categoryDTOList.add(CategoryDTO.builder()
-                    .name(category.getName())
-                    .build());
-        }
 
         List<Discount> discounts = shop.getDiscounts();
         List<DiscountDTO> discountDTOList = new ArrayList<>();
@@ -66,26 +55,27 @@ public class ShopService {
                     .build());
         }
 
+        Category category = shop.getCategory();
+        CategoryDTO categoryDTO = CategoryDTO.builder()
+                .name(category.getName())
+                .build();
+
         return ShopGetCurrentViewDTO.builder()
                 .name(shop.getName())
                 .description(shop.getDescription())
-                .categories(categoryDTOList)
+                .category(categoryDTO)
                 .discounts(discountDTOList)
                 .build();
     }
 
     public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException{
+        Category category = categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория"));
+
         Shop newShop = Shop.builder()
                 .name(shopDTO.getName())
                 .description(shopDTO.getDescription())
+                .category(category)
                 .build();
-
-        List<Category> categories = new ArrayList<>();
-        for (Long categoryId : shopDTO.getCategories()) {
-            Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ObjectNotFoundException(categoryId, "Категория"));
-            categories.add(category);
-        }
-        newShop.setCategories(categories);
 
         return shopRepository.save(newShop);
     }
@@ -94,13 +84,7 @@ public class ShopService {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
         shop.setName(shopDTO.getName());
         shop.setDescription(shopDTO.getDescription());
-
-        List<Category> categories = new ArrayList<>();
-        for (Long categoryId : shopDTO.getCategories()) {
-            Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ObjectNotFoundException(categoryId, "Категория"));
-            categories.add(category);
-        }
-        shop.setCategories(categories);
+        shop.setCategory(categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория")));
 
         return shopRepository.save(shop);
     }

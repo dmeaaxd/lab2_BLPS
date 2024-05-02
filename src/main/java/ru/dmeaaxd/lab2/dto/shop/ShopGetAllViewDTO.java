@@ -11,5 +11,5 @@ import java.util.List;
 public class ShopGetAllViewDTO {
     private String name;
     private String description;
-    private List<CategoryDTO> categories;
+    private CategoryDTO category;
 }

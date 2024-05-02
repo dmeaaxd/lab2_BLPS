@@ -24,9 +24,9 @@ public class Shop {
     @JoinColumn(name = "discountId")
     private List<Discount> discounts;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "categoryId")
-    private List<Category> categories;
+    private Category category;
 
     @OneToMany
     @JoinColumn(name = "clientId")
