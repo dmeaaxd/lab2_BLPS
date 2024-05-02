@@ -32,11 +32,11 @@ public class CategoryService {
     }
 
 
-    public void update(Long id, CategoryDTO categoryDTO) throws Exception {
+    public Long update(Long id, CategoryDTO categoryDTO) throws Exception {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
 
         if (optionalCategory.isEmpty()) {
-            throw new Exception("Категория не найдена");
+            throw new Exception("Категория с данным ID не найдена: ");
         }
 
         Category category = optionalCategory.get();
@@ -44,16 +44,18 @@ public class CategoryService {
 
         if (newName != null && !newName.equals(category.getName())) {
             if (categoryRepository.findByName(newName).isPresent()) {
-                throw new Exception("Эта категория уже есть");
+                throw new Exception("Категория с данным ID уже существует: ");
             }
             category.setName(newName);
         }
 
         categoryRepository.save(category);
+
+        return category.getId();
     }
 
 
-    public void delete(Long id) throws Exception {
+    public Long delete(Long id) throws Exception {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
 
         if (optionalCategory.isEmpty()) {
@@ -62,5 +64,7 @@ public class CategoryService {
 
         Category category = optionalCategory.get();
         categoryRepository.delete(category);
+
+        return category.getId();
     }
 }
