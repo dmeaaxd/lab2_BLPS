@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.dmeaaxd.lab2.dto.ShopDTO;
 import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.repository.CategoryRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
 
 import java.util.ArrayList;
