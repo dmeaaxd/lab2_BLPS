@@ -27,4 +27,8 @@ public class Shop {
     @OneToMany
     @JoinColumn(name = "categoryId")
     private List<Category> categories;
+
+    @OneToMany
+    @JoinColumn(name = "clientId")
+    private List<Client> admins; // Администраторы магазина
 }

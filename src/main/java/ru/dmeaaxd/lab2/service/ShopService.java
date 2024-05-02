@@ -16,7 +16,6 @@ import ru.dmeaaxd.lab2.repository.ShopRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

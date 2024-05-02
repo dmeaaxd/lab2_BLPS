@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.dmeaaxd.lab2.dto.ClientDTO;
+import ru.dmeaaxd.lab2.dto.client.ClientDTO;
 import ru.dmeaaxd.lab2.service.ClientService;
 
 import java.util.HashMap;

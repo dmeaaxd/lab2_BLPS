@@ -24,4 +24,8 @@ public class Client {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billId")
     private Bill accountBill;
+
+    @ManyToOne
+    @JoinColumn(name = "shopID")
+    private Shop shop; // Обозначает магазин, администратором которого он является
 }

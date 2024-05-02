@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.CategoryDTO;
-import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.service.CategoryService;
 
 import java.util.HashMap;

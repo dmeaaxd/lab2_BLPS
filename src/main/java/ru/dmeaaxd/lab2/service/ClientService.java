@@ -3,7 +3,7 @@ package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab2.dto.ClientDTO;
+import ru.dmeaaxd.lab2.dto.client.ClientDTO;
 import ru.dmeaaxd.lab2.entity.Client;
 import ru.dmeaaxd.lab2.repository.ClientRepository;
 

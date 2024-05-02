@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
-import ru.dmeaaxd.lab2.entity.Shop;
-import ru.dmeaaxd.lab2.service.FavoriteService;
 import ru.dmeaaxd.lab2.service.ShopService;
-import ru.dmeaaxd.lab2.service.SubscriptionService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +19,6 @@ import java.util.Map;
 public class ShopController {
 
     private final ShopService shopService;
-    private final FavoriteService favoriteService;
-    private final SubscriptionService subscriptionService;
 
     @GetMapping
     public ResponseEntity<List<ShopGetAllViewDTO>> getAll() {
