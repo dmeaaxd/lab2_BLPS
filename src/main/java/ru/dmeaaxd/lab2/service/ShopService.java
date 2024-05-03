@@ -3,6 +3,7 @@ package ru.dmeaaxd.lab2.service;
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.CategoryDTO;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
@@ -70,6 +71,7 @@ public class ShopService {
 
 
     // TODO: Убрать бесконечное дерево
+    @Transactional
     public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException{
         Category category = categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория"));
 
@@ -92,6 +94,7 @@ public class ShopService {
         return shopRepository.save(shop);
     }
 
+    @Transactional
     public void delete(Long id) throws ObjectNotFoundException {
         shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
         shopRepository.deleteById(id);

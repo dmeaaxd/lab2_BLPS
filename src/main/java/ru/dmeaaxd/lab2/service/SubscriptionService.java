@@ -1,11 +1,13 @@
 package ru.dmeaaxd.lab2.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab2.dto.FavoriteDTO;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
-import ru.dmeaaxd.lab2.entity.*;
+import ru.dmeaaxd.lab2.entity.Bill;
+import ru.dmeaaxd.lab2.entity.Client;
+import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.entity.Subscription;
 import ru.dmeaaxd.lab2.repository.BillRepository;
 import ru.dmeaaxd.lab2.repository.ClientRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
@@ -23,6 +25,7 @@ public class SubscriptionService {
     private final ClientRepository clientRepository;
     private final ShopRepository shopRepository;
     private final BillRepository billRepository;
+
 
     @Transactional
     public SubscriptionDTO subscribe(Long clientId, Long shopId, int duration) throws Exception {

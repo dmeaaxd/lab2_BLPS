@@ -72,6 +72,7 @@ public class CategoryService {
         return category.getId();
     }
 
+
     public List<CategoryDTO> getAll() {
 
         List<CategoryDTO> categoryDTOList = new ArrayList<>();

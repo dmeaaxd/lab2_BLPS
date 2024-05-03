@@ -3,6 +3,7 @@ package ru.dmeaaxd.lab2.service;
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
 import ru.dmeaaxd.lab2.entity.Client;
 import ru.dmeaaxd.lab2.entity.Discount;
@@ -32,6 +33,7 @@ public class ShopDiscountService {
     }
 
     // TODO: Убрать бесконечное дерево
+    @Transactional
     public Discount create(Long clientId, Long shopId, DiscountDTO discountDTO) throws IllegalAccessException {
         if (checkClientRights(clientId, shopId)){
             Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
@@ -48,6 +50,7 @@ public class ShopDiscountService {
     }
 
     // TODO: Убрать бесконечное дерево
+    @Transactional
     public Discount update(Long clientId, Long shopId, Long discountId, DiscountDTO discountDTO) throws IllegalAccessException {
         if (checkClientRights(clientId, shopId)) {
             Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
@@ -64,6 +67,7 @@ public class ShopDiscountService {
         }
     }
 
+    @Transactional
     public void delete(Long clientId, Long shopId, Long discountId) throws ObjectNotFoundException, IllegalAccessException {
         if (checkClientRights(clientId, shopId)) {
             Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
@@ -74,6 +78,7 @@ public class ShopDiscountService {
             throw new IllegalAccessException("У пользователя недостаточно прав");
         }
     }
+
 
     public boolean checkClientRights(Long clientId, Long shopId){
         Client client = clientRepository.findById(clientId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Пользователь"));
