@@ -2,13 +2,10 @@ package ru.dmeaaxd.lab2.service;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
-import ru.dmeaaxd.lab2.dto.client.ClientDTO;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTOResponse;
 import ru.dmeaaxd.lab2.entity.Category;
-import ru.dmeaaxd.lab2.entity.Client;
-import ru.dmeaaxd.lab2.entity.Favorite;
 import ru.dmeaaxd.lab2.repository.CategoryRepository;
 
 import java.util.ArrayList;
@@ -21,9 +18,9 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Long create(CategoryDTO categoryDTO) throws Exception {
+    public Long create(CategoryDTORequest categoryDTORequest) throws Exception {
         Category newCategory = Category.builder()
-                .name(categoryDTO.getName())
+                .name(categoryDTORequest.getName())
                 .build();
 
         if (categoryRepository.findByName(newCategory.getName()).isPresent()) {
@@ -36,7 +33,7 @@ public class CategoryService {
     }
 
 
-    public Long update(Long id, CategoryDTO categoryDTO) throws Exception {
+    public Long update(Long id, CategoryDTORequest categoryDTORequest) throws Exception {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
 
         if (optionalCategory.isEmpty()) {
@@ -44,7 +41,7 @@ public class CategoryService {
         }
 
         Category category = optionalCategory.get();
-        String newName = categoryDTO.getName();
+        String newName = categoryDTORequest.getName();
 
         if (newName != null && !newName.equals(category.getName())) {
             if (categoryRepository.findByName(newName).isPresent()) {
@@ -72,16 +69,16 @@ public class CategoryService {
         return category.getId();
     }
 
+    public List<CategoryDTOResponse> getAll() {
 
-    public List<CategoryDTO> getAll() {
-
-        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        List<CategoryDTOResponse> CategoryDTOResponseList = new ArrayList<>();
 
         for (Category category : categoryRepository.findAll()) {
-            categoryDTOList.add(CategoryDTO.builder()
+            CategoryDTOResponseList.add(CategoryDTOResponse.builder()
+                            .id(category.getId())
                             .name(category.getName())
                             .build());
         }
-        return categoryDTOList;
+        return CategoryDTOResponseList;
     }
 }

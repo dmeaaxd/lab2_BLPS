@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
-import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
-import ru.dmeaaxd.lab2.entity.Category;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTOResponse;
 import ru.dmeaaxd.lab2.service.CategoryService;
 
 import java.util.HashMap;
@@ -22,38 +21,39 @@ public class CategoryController {
     CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAll() {
+    public ResponseEntity<List<CategoryDTOResponse>> getAll() {
         return new ResponseEntity<>(categoryService.getAll(), HttpStatus.OK);
     }
 
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CategoryDTO categoryDTO,
+    public ResponseEntity<?> create(@RequestBody CategoryDTORequest categoryDTORequest,
                                     @RequestHeader(value = "Auth", required = false) Long clientId)  {
+
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         Map<String, String> response = new HashMap<>();
 
-        if (categoryDTO.antiChecker()) {
+        if (categoryDTORequest.antiChecker()) {
             response.put("error", "Переданы неверные параметры в запросе");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
         try {
-            response.put("categoryId", String.valueOf(categoryService.create(categoryDTO)));
+            response.put("categoryId", String.valueOf(categoryService.create(categoryDTORequest)));
             return new ResponseEntity<>(response, HttpStatus.CREATED);
 
         } catch (Exception e) {
-            response.put("error", "Категория с данным названием уже есть: " + categoryDTO.getName());
+            response.put("error", "Категория с данным названием уже есть: " + categoryDTORequest.getName());
             return new ResponseEntity<>(response, HttpStatus.ALREADY_REPORTED);
         }
     }
 
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestBody CategoryDTO categoryDTO,
+                                    @RequestBody CategoryDTORequest categoryDTORequest,
                                     @RequestHeader(value = "Auth", required = false) Long clientId)  {
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -61,22 +61,22 @@ public class CategoryController {
 
         Map<String, String> response = new HashMap<>();
 
-        if (categoryDTO.antiChecker()) {
+        if (categoryDTORequest.antiChecker()) {
             response.put("error", "Переданы неверные параметры в запросе");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
         try {
-            response.put("categoryId", String.valueOf(categoryService.update(id, categoryDTO)));
+            response.put("categoryId", String.valueOf(categoryService.update(id, categoryDTORequest)));
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.put("error", e + categoryDTO.getName());
+            response.put("error", e + categoryDTORequest.getName());
             return new ResponseEntity<>(response, HttpStatus.ALREADY_REPORTED);
         }
     }
 
-    @PostMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id,
                                     @RequestHeader(value = "Auth", required = false) Long clientId)  {
         if (clientId == null) {

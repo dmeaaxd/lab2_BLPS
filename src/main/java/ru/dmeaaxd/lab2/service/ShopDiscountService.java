@@ -21,6 +21,8 @@ public class ShopDiscountService {
     private final DiscountRepository discountRepository;
     private final ClientRepository clientRepository;
 
+
+    @Transactional
     public DiscountDTO getCurrent(Long shopId, Long discountId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
         Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new ObjectNotFoundException(discountId, "Предложение"));

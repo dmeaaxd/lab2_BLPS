@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
@@ -30,14 +30,14 @@ public class ShopService {
 
         for (Shop shop : shopRepository.findAll()){
             Category category = shop.getCategory();
-            CategoryDTO categoryDTO = CategoryDTO.builder()
+            CategoryDTORequest categoryDTORequest = CategoryDTORequest.builder()
                     .name(category.getName())
                     .build();
 
             shopGetAllViewDTOList.add(ShopGetAllViewDTO.builder()
                     .name(shop.getName())
                     .description(shop.getDescription())
-                    .category(categoryDTO)
+                    .category(categoryDTORequest)
                     .build());
         }
         return shopGetAllViewDTOList;
@@ -57,14 +57,14 @@ public class ShopService {
         }
 
         Category category = shop.getCategory();
-        CategoryDTO categoryDTO = CategoryDTO.builder()
+        CategoryDTORequest categoryDTORequest = CategoryDTORequest.builder()
                 .name(category.getName())
                 .build();
 
         return ShopGetCurrentViewDTO.builder()
                 .name(shop.getName())
                 .description(shop.getDescription())
-                .category(categoryDTO)
+                .category(categoryDTORequest)
                 .discounts(discountDTOList)
                 .build();
     }

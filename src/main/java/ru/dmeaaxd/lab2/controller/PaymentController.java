@@ -36,15 +36,14 @@ public class PaymentController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.put("bill", "Клиент с данным ID не найден: " + clientId);
+            response.put("error", "Счёт клиента с данным ID не найден: " + clientId);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/topUp")
-    public ResponseEntity<?> topUp(@RequestParam Long id,
-                                   @RequestParam int amount,
-                                   @RequestHeader(value = "Auth", required = false) Long clientId) {
+    public ResponseEntity<?> topUp(@RequestHeader(value = "Auth", required = false) Long clientId,
+                                   @RequestParam int amount) {
 
 
         if (clientId == null) {
@@ -54,11 +53,12 @@ public class PaymentController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            response.put("billAmount", String.valueOf(billService.topUp(id, amount)));
+            response.put("billAmount", String.valueOf(billService.topUp(clientId, amount)));
+
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.put("error", "Магазина с данным ID не существует: " + id);
+            response.put("error", "Счёт клиента с данным ID не найден: " + clientId);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }

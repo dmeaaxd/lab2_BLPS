@@ -2,9 +2,7 @@ package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
 import ru.dmeaaxd.lab2.dto.FavoriteDTO;
-import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.entity.Client;
 import ru.dmeaaxd.lab2.entity.Favorite;
 import ru.dmeaaxd.lab2.entity.Shop;

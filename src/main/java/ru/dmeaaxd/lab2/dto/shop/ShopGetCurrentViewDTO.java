@@ -2,9 +2,8 @@ package ru.dmeaaxd.lab2.dto.shop;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
-import ru.dmeaaxd.lab2.entity.Discount;
 
 import java.util.List;
 
@@ -13,6 +12,6 @@ import java.util.List;
 public class ShopGetCurrentViewDTO {
     private String name;
     private String description;
-    private CategoryDTO category;
+    private CategoryDTORequest category;
     private List<DiscountDTO> discounts;
 }

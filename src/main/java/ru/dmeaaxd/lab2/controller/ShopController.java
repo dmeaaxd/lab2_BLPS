@@ -41,6 +41,7 @@ public class ShopController {
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ShopDTO shopDTO,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
+
         Map<String, String> response = new HashMap<>();
 
         if (clientId == null) {
@@ -65,6 +66,7 @@ public class ShopController {
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestBody ShopDTO shopDTO,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
+
         Map<String, String> response = new HashMap<>();
 
         if (clientId == null) {
@@ -84,7 +86,7 @@ public class ShopController {
         }
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
         Map<String, String> response = new HashMap<>();

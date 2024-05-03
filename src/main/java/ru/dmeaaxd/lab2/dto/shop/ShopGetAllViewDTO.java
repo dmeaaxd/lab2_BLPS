@@ -2,14 +2,12 @@ package ru.dmeaaxd.lab2.dto.shop;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
-
-import java.util.List;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 
 @Builder
 @Data
 public class ShopGetAllViewDTO {
     private String name;
     private String description;
-    private CategoryDTO category;
+    private CategoryDTORequest category;
 }

@@ -19,7 +19,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "shopId")
     private List<Shop> shops;
 

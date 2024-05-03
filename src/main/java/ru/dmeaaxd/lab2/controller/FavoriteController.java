@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.CategoryDTO;
 import ru.dmeaaxd.lab2.dto.FavoriteDTO;
 import ru.dmeaaxd.lab2.dto.FavoritesRequestDTO;
 import ru.dmeaaxd.lab2.entity.Favorite;
