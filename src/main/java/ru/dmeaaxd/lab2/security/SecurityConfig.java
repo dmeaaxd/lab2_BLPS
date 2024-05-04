@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,13 +21,13 @@ public class SecurityConfig {
     @Autowired
     private AuthenticationProvider authenticationProvider;
 
-
-    // TODO: Обновить пути
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/**"))
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll())
+                .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/shop/**").permitAll())
+                .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/shop_discounts/**").permitAll())
                 .authorizeHttpRequests((requests) -> requests.anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .authenticationProvider(authenticationProvider);
