@@ -39,6 +39,6 @@ public class Client {
     private Bill accountBill;
 
     @ManyToOne
-    @JoinColumn(name = "shopID")
+    @JoinColumn(name = "shop_id")
     private Shop shop; // Обозначает магазин, администратором которого он является
 }

@@ -16,12 +16,13 @@ public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "clientId")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "shopId")
+    @JoinColumn(name = "shop_id")
     private Shop shop;
 
     private int duration;

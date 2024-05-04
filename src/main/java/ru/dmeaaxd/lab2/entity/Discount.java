@@ -18,6 +18,7 @@ public class Discount {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "shop_id")
     private Shop shop;
 
     String title;

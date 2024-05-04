@@ -19,9 +19,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "shopId")
-    private List<Shop> shops;
-
     String name;
+
+    @OneToMany(mappedBy = "category")
+    private List<Shop> shops;
 }

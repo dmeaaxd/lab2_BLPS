@@ -21,15 +21,13 @@ public class Shop {
     private String name;
     private String description;
 
-    @OneToMany
-    @JoinColumn(name = "discountId")
+    @OneToMany(mappedBy = "shop")
     private List<Discount> discounts;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany
-    @JoinColumn(name = "clientId")
+    @OneToMany(mappedBy = "shop")
     private List<Client> admins; // Администраторы магазина
 }

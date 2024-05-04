@@ -19,7 +19,6 @@ public class Bill {
     private Long id;
     private int accountBill;
 
-    @OneToOne
-    @JoinColumn(name = "clientId")
+    @OneToOne(mappedBy = "accountBill")
     private Client client;
 }
