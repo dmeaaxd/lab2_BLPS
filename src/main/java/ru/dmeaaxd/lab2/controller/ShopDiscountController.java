@@ -56,12 +56,7 @@ public class ShopDiscountController {
         try {
             return new ResponseEntity<>(shopDiscountService.create(clientId, shopId, discountDTO), HttpStatus.OK);
         } catch (ObjectNotFoundException exception){
-            if (Objects.equals(exception.getEntityName(), "Магазин")){
-                response.put("error", "Такого магазина нет");
-            }
-            else{
-                response.put("error", "Такого предложения нет");
-            }
+            response.put("error", "Такого магазина нет, " + exception.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
         } catch (IllegalAccessException illegalAccessException){

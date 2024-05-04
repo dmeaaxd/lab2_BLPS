@@ -23,6 +23,7 @@ public class Discount {
 
     String title;
 
+    @Lob
     String description;
 
     String promoCode;

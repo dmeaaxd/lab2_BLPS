@@ -36,7 +36,7 @@ public class ShopDiscountService {
 
     // TODO: Убрать бесконечное дерево
     @Transactional
-    public Discount create(Long clientId, Long shopId, DiscountDTO discountDTO) throws IllegalAccessException {
+    public Discount create(Long clientId, Long shopId, DiscountDTO discountDTO) throws ObjectNotFoundException, IllegalAccessException {
         if (checkClientRights(clientId, shopId)){
             Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
             Discount discount = Discount.builder()
