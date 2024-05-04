@@ -3,6 +3,7 @@ package ru.dmeaaxd.lab2.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 import ru.dmeaaxd.lab2.dto.category.CategoryDTOResponse;
@@ -25,14 +26,9 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.getAll(), HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody CategoryDTORequest categoryDTORequest,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId)  {
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<?> create(@RequestBody CategoryDTORequest categoryDTORequest) {
 
         Map<String, String> response = new HashMap<>();
 
@@ -51,13 +47,10 @@ public class CategoryController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestBody CategoryDTORequest categoryDTORequest,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId)  {
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+                                    @RequestBody CategoryDTORequest categoryDTORequest) {
 
         Map<String, String> response = new HashMap<>();
 
@@ -76,13 +69,9 @@ public class CategoryController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId)  {
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         Map<String, String> response = new HashMap<>();
 
         try {

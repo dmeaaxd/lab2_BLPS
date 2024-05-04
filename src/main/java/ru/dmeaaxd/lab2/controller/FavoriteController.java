@@ -3,6 +3,7 @@ package ru.dmeaaxd.lab2.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.FavoriteDTO;
 import ru.dmeaaxd.lab2.dto.FavoritesRequestDTO;
@@ -20,57 +21,40 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping
-    public ResponseEntity<List<FavoriteDTO>> getAll(@RequestHeader(value = "Auth", required = false) Long clientId) {
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        return new ResponseEntity<>(favoriteService.getFavorites(clientId), HttpStatus.OK);
+    public ResponseEntity<List<FavoriteDTO>> getAll() {
+        return new ResponseEntity<>(favoriteService.getFavorites(), HttpStatus.OK);
     }
 
-
-
-
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/add")
-    public ResponseEntity<?> favoriteShop(@RequestBody FavoritesRequestDTO favoritesRequestDTO,
-                                          @RequestHeader(value = "Auth", required = false) Long clientId) {
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        Long shopId = favoritesRequestDTO.getShopId();
+    public ResponseEntity<?> favoriteShop(@RequestBody FavoritesRequestDTO favoritesRequestDTO) {
 
         if (favoritesRequestDTO.antiChecker()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
         }
 
-        Favorite favorite;
+        Favorite favorite = null;
         try {
-            favorite = favoriteService.add(clientId, shopId);
+            favorite = favoriteService.add(favoritesRequestDTO.getShopId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
         }
 
         Map<String, String> response = new HashMap<>();
         if (favorite != null) {
-            response.put("message", "Магазин: " + shopId + " добавлен в избранное для клиента: " + clientId);
+            response.put("message", "Магазин: " + favoritesRequestDTO.getShopId() + " добавлен в избранное для клиента");
         } else {
-            response.put("error", "Магазин уже добавлен в избранное для клиента: " + clientId);
+            response.put("error", "Магазин уже добавлен в избранное для клиента");
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/{id}/remove")
-    public ResponseEntity<?> remove(@PathVariable Long id,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId)  {
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+    public ResponseEntity<?> remove(@PathVariable Long id) {
         Map<String, String> response = new HashMap<>();
 
         try {

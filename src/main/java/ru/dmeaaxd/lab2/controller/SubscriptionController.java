@@ -3,11 +3,10 @@ package ru.dmeaaxd.lab2.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.FavoriteDTO;
 import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
 import ru.dmeaaxd.lab2.dto.SubscriptionRequestDTO;
-import ru.dmeaaxd.lab2.entity.Subscription;
 import ru.dmeaaxd.lab2.service.SubscriptionService;
 
 import java.util.HashMap;
@@ -21,20 +20,15 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping
-    public ResponseEntity<List<SubscriptionDTO>> getSubscriptions(@RequestHeader(value = "Auth", required = false) Long clientId) {
-        return new ResponseEntity<>(subscriptionService.getSubscriptions(clientId), HttpStatus.OK);
+    public ResponseEntity<List<SubscriptionDTO>> getSubscriptions() {
+        return new ResponseEntity<>(subscriptionService.getSubscriptions(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/subscribe")
-    public ResponseEntity<?> subscribe(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
-                                       @RequestHeader(value = "Auth", required = false) Long clientId) {
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+    public ResponseEntity<?> subscribe(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO) {
         Long shopId = subscriptionRequestDTO.getShopId();
         int duration = subscriptionRequestDTO.getDuration();
 
@@ -44,21 +38,18 @@ public class SubscriptionController {
 
         SubscriptionDTO subscribe = null;
         try {
-            subscribe = subscriptionService.subscribe(clientId, shopId, duration);
+            subscribe = subscriptionService.subscribe(shopId, duration);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
         }
 
         Map<String, String> response = new HashMap<>();
         if (subscribe != null) {
-            response.put("message", "Подписка на магазин: " + shopId + " для клиента " + clientId + " оформлена/продлена на " + duration);
+            response.put("message", "Подписка на магазин: " + shopId + " для клиента оформлена/продлена на " + duration);
         } else {
-            response.put("error", "У клиента: " + clientId + " недостаточно средств");
+            response.put("error", "У клиента недостаточно средств");
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
-
-
 }

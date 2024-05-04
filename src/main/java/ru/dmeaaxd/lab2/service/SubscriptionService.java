@@ -1,11 +1,13 @@
 package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
 import ru.dmeaaxd.lab2.entity.Bill;
-import ru.dmeaaxd.lab2.entity.Client;
+import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.entity.Subscription;
 import ru.dmeaaxd.lab2.repository.BillRepository;
@@ -28,24 +30,18 @@ public class SubscriptionService {
 
 
     @Transactional
-    public SubscriptionDTO subscribe(Long clientId, Long shopId, int duration) throws Exception {
-
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
-
-        if (optionalClient.isEmpty()) {
-            throw new Exception("Клиент: " + clientId + " не найден");
-        }
-
+    public SubscriptionDTO subscribe(Long shopId, int duration) throws Exception {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
 
         Optional<Shop> optionalShop = shopRepository.findById(shopId);
         if (optionalShop.isEmpty()) {
             throw new Exception("Магазин: " + shopId + " не найден");
         }
 
-        Client client = optionalClient.get();
         Shop shop = optionalShop.get();
         Bill bill = client.getAccountBill();
-
 
         Subscription existingSubscription = subscriptionRepository.findByClientAndShop(client, shop);
         if (existingSubscription != null) {
@@ -66,9 +62,7 @@ public class SubscriptionService {
             return null;
         }
 
-        clientRepository.save(client);
         subscriptionRepository.save(existingSubscription);
-
 
         SubscriptionDTO subscriptionDTO = SubscriptionDTO.builder()
                 .clientId(existingSubscription.getClient().getId())
@@ -80,8 +74,12 @@ public class SubscriptionService {
     }
 
 
-    public List<SubscriptionDTO> getSubscriptions(Long clientId) {
-        List<Subscription> subscriptionList = subscriptionRepository.findAllByClientId(clientId);
+    public List<SubscriptionDTO> getSubscriptions() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+
+        List<Subscription> subscriptionList = subscriptionRepository.findAllByClientId(client.getId());
         List<SubscriptionDTO> subscriptionDTOList = new ArrayList<>();
         for (Subscription subscription : subscriptionList) {
             subscriptionDTOList.add(SubscriptionDTO.builder()

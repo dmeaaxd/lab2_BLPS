@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.dmeaaxd.lab2.entity.auth.Client;
 
 @Entity
 @Data

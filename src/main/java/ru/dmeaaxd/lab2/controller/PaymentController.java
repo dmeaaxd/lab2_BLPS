@@ -4,13 +4,11 @@ package ru.dmeaaxd.lab2.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.BillDTO;
-import ru.dmeaaxd.lab2.dto.FavoriteDTO;
 import ru.dmeaaxd.lab2.service.BillService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,46 +18,29 @@ public class PaymentController {
 
     private final BillService billService;
 
-
-    @GetMapping ("/bill")
-    public ResponseEntity<?> getBill(@RequestHeader(value = "Auth", required = false) Long clientId) {
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/bill")
+    public ResponseEntity<?> getBill() {
         Map<String, String> response = new HashMap<>();
-
         try {
-
-            response.put("bill", String.valueOf(billService.getBill(clientId)));
+            response.put("bill", String.valueOf(billService.getBill()));
             return new ResponseEntity<>(response, HttpStatus.OK);
-
         } catch (Exception e) {
-            response.put("error", "Счёт клиента с данным ID не найден: " + clientId);
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/topUp")
-    public ResponseEntity<?> topUp(@RequestHeader(value = "Auth", required = false) Long clientId,
-                                   @RequestParam int amount) {
-
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+    public ResponseEntity<?> topUp(@RequestParam int amount) {
         Map<String, String> response = new HashMap<>();
-
         try {
-            response.put("billAmount", String.valueOf(billService.topUp(clientId, amount)));
-
+            response.put("billAmount", String.valueOf(billService.topUp(amount)));
             return new ResponseEntity<>(response, HttpStatus.OK);
-
         } catch (Exception e) {
-            response.put("error", "Счёт клиента с данным ID не найден: " + clientId);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

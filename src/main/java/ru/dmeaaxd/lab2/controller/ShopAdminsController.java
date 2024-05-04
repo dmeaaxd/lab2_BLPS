@@ -1,13 +1,11 @@
 package ru.dmeaaxd.lab2.controller;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.ObjectDeletedException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.client.ClientDTO;
-import ru.dmeaaxd.lab2.dto.client.ClientShopAdminViewDTO;
 import ru.dmeaaxd.lab2.service.ShopAdminsService;
 
 import java.util.HashMap;
@@ -21,43 +19,35 @@ import java.util.Objects;
 public class ShopAdminsController {
     private final ShopAdminsService shopAdminsService;
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @GetMapping("/{id}/")
-    public ResponseEntity<?> getShopAdmins(@PathVariable Long id,
-                                           @RequestHeader(value = "Auth", required = false) Long clientId) {
+    public ResponseEntity<?> getShopAdmins(@PathVariable Long id) {
         Map<String, String> response = new HashMap<>();
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         try {
             return new ResponseEntity<>(shopAdminsService.getShopAdmins(id), HttpStatus.OK);
-        } catch (ObjectNotFoundException exception){
+        } catch (ObjectNotFoundException exception) {
             response.put("error", "Такого магазина нет");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestParam List<Long> clients,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId) {
+                                    @RequestParam List<Long> admins) {
         Map<String, String> response = new HashMap<>();
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         try {
-            return new ResponseEntity<>(shopAdminsService.updateShopAdmins(id, clients), HttpStatus.OK);
-        } catch (ObjectNotFoundException exception){
-            if (Objects.equals(exception.getEntityName(), "Магазин")){
+            return new ResponseEntity<>(shopAdminsService.updateShopAdmins(id, admins), HttpStatus.OK);
+        } catch (ObjectNotFoundException exception) {
+            if (Objects.equals(exception.getEntityName(), "Магазин")) {
                 response.put("error", "Такого магазина нет");
-            }
-            else {
+            } else {
                 response.put("error", "Такого пользователя нет (id=" + exception.getIdentifier() + ")");
             }
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -1,11 +1,14 @@
 package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
+import org.hibernate.ObjectNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.dmeaaxd.lab2.dto.FavoriteDTO;
-import ru.dmeaaxd.lab2.entity.Client;
 import ru.dmeaaxd.lab2.entity.Favorite;
 import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.repository.ClientRepository;
 import ru.dmeaaxd.lab2.repository.FavoriteRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
@@ -22,15 +25,14 @@ public class FavoriteService {
     private final ClientRepository clientRepository;
     private final ShopRepository shopRepository;
 
-    public Favorite add(Long clientId, Long shopId) throws Exception {
+    public Favorite add(Long shopId) throws Exception {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+        Long clientId = client.getId();
+
         if (favoriteRepository.existsByClientIdAndShopId(clientId, shopId)) {
             return null;
-        }
-
-        Optional<Client> optionalClient = clientRepository.findById(clientId);
-
-        if (optionalClient.isEmpty()) {
-            throw new Exception("Клиент: " + clientId + " не найден");
         }
 
         Optional<Shop> optionalShop = shopRepository.findById(shopId);
@@ -39,7 +41,7 @@ public class FavoriteService {
         }
 
         Favorite favorite = Favorite.builder()
-                .client(optionalClient.get())
+                .client(client)
                 .shop(optionalShop.get())
                 .build();
 
@@ -47,27 +49,36 @@ public class FavoriteService {
     }
 
 
-    public List<FavoriteDTO> getFavorites(Long clientId) {
-        List<Favorite> favoriteList = favoriteRepository.findAllByClientId(clientId);
+    public List<FavoriteDTO> getFavorites() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+
+        List<Favorite> favoriteList = favoriteRepository.findAllByClientId(client.getId());
         List<FavoriteDTO> favoriteDTOList = new ArrayList<>();
         for (Favorite favorite : favoriteList) {
             favoriteDTOList.add(FavoriteDTO.builder()
-                            .clientId(favorite.getClient().getId())
-                            .shopId(favorite.getShop().getId())
-                            .build());
+                    .clientId(favorite.getClient().getId())
+                    .shopId(favorite.getShop().getId())
+                    .build());
         }
 
         return favoriteDTOList;
     }
 
 
-    public Long remove(Long favoriteId) throws Exception {
-        if (!favoriteRepository.existsById(favoriteId)) {
-            throw new Exception("Магазин не найден в избранном");
+    public String remove(Long favoriteId) throws Exception {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+
+        Favorite favorite = favoriteRepository.findById(favoriteId).orElseThrow(() -> new ObjectNotFoundException(favoriteId, "Магазин"));
+        List<Favorite> favoriteList = favoriteRepository.findAllByClientId(client.getId());
+        if (!favoriteList.contains(favorite)) {
+            throw new Exception("У вас нет прав взаимодействовать с данным магазином");
         }
 
         favoriteRepository.deleteById(favoriteId);
-
-        return favoriteId;
+        return "Магазин удален из избранного";
     }
 }

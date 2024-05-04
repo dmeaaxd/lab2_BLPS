@@ -69,8 +69,6 @@ public class ShopService {
                 .build();
     }
 
-
-    // TODO: Убрать бесконечное дерево
     @Transactional
     public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException{
         Category category = categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория"));
@@ -84,7 +82,6 @@ public class ShopService {
         return shopRepository.save(newShop);
     }
 
-    // TODO: Убрать бесконечное дерево
     public Shop update(Long id, ShopDTO shopDTO) throws ObjectNotFoundException {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
         shop.setName(shopDTO.getName());

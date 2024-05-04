@@ -2,10 +2,12 @@ package ru.dmeaaxd.lab2.service;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
-import ru.dmeaaxd.lab2.entity.Client;
+import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.entity.Discount;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.repository.ClientRepository;
@@ -24,7 +26,7 @@ public class ShopDiscountService {
 
     @Transactional
     public DiscountDTO getCurrent(Long shopId, Long discountId) {
-        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
+        shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
         Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new ObjectNotFoundException(discountId, "Предложение"));
 
         return DiscountDTO.builder()
@@ -34,10 +36,14 @@ public class ShopDiscountService {
                 .build();
     }
 
-    // TODO: Убрать бесконечное дерево
+
     @Transactional
-    public Discount create(Long clientId, Long shopId, DiscountDTO discountDTO) throws ObjectNotFoundException, IllegalAccessException {
-        if (checkClientRights(clientId, shopId)){
+    public Discount create(Long shopId, DiscountDTO discountDTO) throws ObjectNotFoundException, IllegalAccessException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+
+        if (checkClientRights(client.getId(), shopId)){
             Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
             Discount discount = Discount.builder()
                     .title(discountDTO.getTitle())
@@ -51,11 +57,14 @@ public class ShopDiscountService {
         }
     }
 
-    // TODO: Убрать бесконечное дерево
     @Transactional
-    public Discount update(Long clientId, Long shopId, Long discountId, DiscountDTO discountDTO) throws IllegalAccessException {
-        if (checkClientRights(clientId, shopId)) {
-            Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
+    public Discount update(Long shopId, Long discountId, DiscountDTO discountDTO) throws IllegalAccessException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+
+        if (checkClientRights(client.getId(), shopId)) {
+            shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
             Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new ObjectNotFoundException(discountId, "Предложение"));
 
             discount.setTitle(discountDTO.getTitle());
@@ -70,9 +79,13 @@ public class ShopDiscountService {
     }
 
     @Transactional
-    public void delete(Long clientId, Long shopId, Long discountId) throws ObjectNotFoundException, IllegalAccessException {
-        if (checkClientRights(clientId, shopId)) {
-            Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
+    public void delete(Long shopId, Long discountId) throws ObjectNotFoundException, IllegalAccessException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Client client = clientRepository.findByUsername(username);
+
+        if (checkClientRights(client.getId(), shopId)) {
+            shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
             discountRepository.findById(discountId).orElseThrow(() -> new ObjectNotFoundException(discountId, "Предложение"));
             discountRepository.deleteById(discountId);
         }
@@ -84,7 +97,7 @@ public class ShopDiscountService {
 
     public boolean checkClientRights(Long clientId, Long shopId){
         Client client = clientRepository.findById(clientId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Пользователь"));
-        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
+        shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
 
         return client.getShop() != null && Objects.equals(client.getShop().getId(), shopId);
     }

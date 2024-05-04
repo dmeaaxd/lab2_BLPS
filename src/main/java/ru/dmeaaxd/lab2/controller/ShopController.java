@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
@@ -38,30 +39,24 @@ public class ShopController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody ShopDTO shopDTO,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId) {
-
+    public ResponseEntity<?> create(@RequestBody ShopDTO shopDTO) {
         Map<String, String> response = new HashMap<>();
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         if (shopDTO.antiCheckerRegister()) {
             response.put("error", "Переданы неверные параметры в запросе");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
 
-        try{
+        try {
             return new ResponseEntity<>(shopService.create(shopDTO), HttpStatus.OK);
-        }
-        catch (ObjectNotFoundException exception){
+        } catch (ObjectNotFoundException exception) {
             response.put("error", "Такой категории нет (id=" + exception.getIdentifier() + ")");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestBody ShopDTO shopDTO,
@@ -86,15 +81,10 @@ public class ShopController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         Map<String, String> response = new HashMap<>();
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         try {
             shopService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
