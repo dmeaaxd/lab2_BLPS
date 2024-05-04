@@ -2,25 +2,15 @@ package ru.dmeaaxd.lab2.dto.client;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.dmeaaxd.lab2.entity.auth.Role;
+
+import java.util.Set;
 
 @Data
 @Builder
 public class ClientDTO {
     private String username;
     private String email;
-    private String password;
-
-    public boolean antiCheckerRegister() {
-        if (username == null || username.isEmpty()) return true;
-        if (email == null || email.isEmpty()) return true;
-        if (password == null || password.isEmpty()) return true;
-        return false;
-    }
-
-    public boolean antiCheckerLogin() {
-        if (username == null || username.isEmpty()) return true;
-        if (password == null || password.isEmpty()) return true;
-        return false;
-    }
+    private Set<Role> roles;
 }
 

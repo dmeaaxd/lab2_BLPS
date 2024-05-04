@@ -12,7 +12,10 @@ import ru.dmeaaxd.lab2.dto.shop.ShopGetCurrentViewDTO;
 import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.entity.Discount;
 import ru.dmeaaxd.lab2.entity.Shop;
+import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.repository.CategoryRepository;
+import ru.dmeaaxd.lab2.repository.ClientRepository;
+import ru.dmeaaxd.lab2.repository.DiscountRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
 
 import java.util.ArrayList;
@@ -23,6 +26,8 @@ import java.util.List;
 public class ShopService {
 
     private final ShopRepository shopRepository;
+    private final ClientRepository clientRepository;
+    private final DiscountRepository discountRepository;
     private final CategoryRepository categoryRepository;
 
     public List<ShopGetAllViewDTO> getAll() {
@@ -35,10 +40,11 @@ public class ShopService {
                     .build();
 
             shopGetAllViewDTOList.add(ShopGetAllViewDTO.builder()
-                    .name(shop.getName())
-                    .description(shop.getDescription())
-                    .category(categoryDTORequest)
-                    .build());
+                            .id(shop.getId())
+                            .name(shop.getName())
+                            .description(shop.getDescription())
+                            .category(categoryDTORequest)
+                            .build());
         }
         return shopGetAllViewDTOList;
     }
@@ -93,7 +99,13 @@ public class ShopService {
 
     @Transactional
     public void delete(Long id) throws ObjectNotFoundException {
-        shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
+        for (Client admin : shop.getAdmins()){
+            clientRepository.delete(admin);
+        }
+        for (Discount discount : shop.getDiscounts()){
+            discountRepository.delete(discount);
+        }
         shopRepository.deleteById(id);
     }
 }

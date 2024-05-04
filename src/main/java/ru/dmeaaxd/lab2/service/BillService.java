@@ -27,7 +27,6 @@ public class BillService {
     }
 
 
-    @Transactional
     public int topUp(int amount) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();

@@ -9,4 +9,11 @@ public class RegisterDTO {
     private String username;
     private String email;
     private String password;
+
+    public boolean antiCheckerRegister() {
+        if (username == null || username.isEmpty()) return true;
+        if (email == null || email.isEmpty()) return true;
+        if (password == null || password.isEmpty()) return true;
+        return false;
+    }
 }

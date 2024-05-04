@@ -2,8 +2,6 @@ package ru.dmeaaxd.lab2.service;
 
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.dmeaaxd.lab2.dto.client.ClientDTO;
@@ -25,9 +23,13 @@ public class ClientService {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
-    public Client register(RegisterDTO registerDTO) throws Exception {
+    public ClientDTO register(RegisterDTO registerDTO) throws Exception {
         if (clientRepository.existsByUsername(registerDTO.getUsername())) {
             throw new Exception("Username is already taken!");
+        }
+
+        if (registerDTO.antiCheckerRegister()){
+            throw new IllegalArgumentException("Данные введены некорректно, все поля должны быть заполнены");
         }
 
         if (clientRepository.existsByEmail(registerDTO.getEmail())) {
@@ -44,6 +46,11 @@ public class ClientService {
         roles.add(role);
         client.setRoles(roles);
 
-        return clientRepository.save(client);
+        Client resultClient = clientRepository.save(client);
+        return ClientDTO.builder()
+                .username(resultClient.getUsername())
+                .email(resultClient.getUsername())
+                .roles(resultClient.getRoles())
+                .build();
     }
 }

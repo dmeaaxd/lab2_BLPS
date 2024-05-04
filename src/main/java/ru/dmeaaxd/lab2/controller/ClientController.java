@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
-public class AuthController {
+public class ClientController {
     private ClientService clientService;
 
     @PostMapping("/register")

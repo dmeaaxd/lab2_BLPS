@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
+import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.service.ShopService;
 
 import java.util.HashMap;
@@ -49,7 +50,8 @@ public class ShopController {
         }
 
         try {
-            return new ResponseEntity<>(shopService.create(shopDTO), HttpStatus.OK);
+            response.put("id", String.valueOf(shopService.create(shopDTO).getId()));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ObjectNotFoundException exception) {
             response.put("error", "Такой категории нет (id=" + exception.getIdentifier() + ")");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -74,7 +76,8 @@ public class ShopController {
         }
 
         try {
-            return new ResponseEntity<>(shopService.update(id, shopDTO), HttpStatus.OK);
+            response.put("id", String.valueOf(shopService.update(id, shopDTO).getId()));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ObjectNotFoundException exception) {
             response.put("error", "Такой категории нет" + exception.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

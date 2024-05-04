@@ -3,6 +3,7 @@ package ru.dmeaaxd.lab2.service;
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.client.ClientShopAdminViewDTO;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.entity.auth.Client;
@@ -12,6 +13,7 @@ import ru.dmeaaxd.lab2.repository.RoleRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,9 +39,19 @@ public class ShopAdminsService {
         return shopAdminViewDTOList;
     }
 
+    @Transactional
     public List<ClientShopAdminViewDTO> updateShopAdmins(Long id, List<Long> clients) throws Exception {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
 
+        // Снимаем всех старых администраторов
+        Role baseRole = roleRepository.findByName("USER");
+        for (Client lastAdmin : shop.getAdmins()){
+            lastAdmin.setRoles(new HashSet<>(List.of(new Role[]{baseRole})));
+            lastAdmin.setShop(null);
+            clientRepository.save(lastAdmin);
+        }
+
+        // Добавляем новых администраторов
         for (Long clientID : clients) {
             Client client = clientRepository.findById(clientID).orElseThrow(() -> new ObjectNotFoundException(id, "Пользователь"));
             Set<Role> roles = client.getRoles();
@@ -55,6 +67,16 @@ public class ShopAdminsService {
             clientRepository.save(client);
         }
 
-        return getShopAdmins(id);
+        shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
+
+        List<ClientShopAdminViewDTO> shopAdminViewDTOList = new ArrayList<>();
+        for (Client client : shop.getAdmins()) {
+            shopAdminViewDTOList.add(ClientShopAdminViewDTO.builder()
+                    .id(client.getId())
+                    .username(client.getUsername())
+                    .build());
+        }
+
+        return shopAdminViewDTOList;
     }
 }

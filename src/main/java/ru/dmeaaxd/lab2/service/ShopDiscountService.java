@@ -23,8 +23,6 @@ public class ShopDiscountService {
     private final DiscountRepository discountRepository;
     private final ClientRepository clientRepository;
 
-
-    @Transactional
     public DiscountDTO getCurrent(Long shopId, Long discountId) {
         shopRepository.findById(shopId).orElseThrow(() -> new ObjectNotFoundException(shopId, "Магазин"));
         Discount discount = discountRepository.findById(discountId).orElseThrow(() -> new ObjectNotFoundException(discountId, "Предложение"));
@@ -36,8 +34,6 @@ public class ShopDiscountService {
                 .build();
     }
 
-
-    @Transactional
     public Discount create(Long shopId, DiscountDTO discountDTO) throws ObjectNotFoundException, IllegalAccessException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -57,7 +53,6 @@ public class ShopDiscountService {
         }
     }
 
-    @Transactional
     public Discount update(Long shopId, Long discountId, DiscountDTO discountDTO) throws IllegalAccessException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -78,7 +73,6 @@ public class ShopDiscountService {
         }
     }
 
-    @Transactional
     public void delete(Long shopId, Long discountId) throws ObjectNotFoundException, IllegalAccessException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
