@@ -25,7 +25,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/**"))
-                .authorizeHttpRequests((requests) -> requests.requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll())
+                .authorizeHttpRequests((requests) -> requests.requestMatchers(new AntPathRequestMatcher("/auth/register")).permitAll())
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/shop/**").permitAll())
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/shop_discounts/**").permitAll())
                 .authorizeHttpRequests((requests) -> requests.anyRequest().authenticated())

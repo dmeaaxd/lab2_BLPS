@@ -51,6 +51,8 @@ public class ShopAdminsService {
             clientRepository.save(lastAdmin);
         }
 
+        List<Client> admins = new ArrayList<>();
+
         // Добавляем новых администраторов
         for (Long clientID : clients) {
             Client client = clientRepository.findById(clientID).orElseThrow(() -> new ObjectNotFoundException(id, "Пользователь"));
@@ -63,11 +65,13 @@ public class ShopAdminsService {
 
             roles.add(shop_admin);
             client.setRoles(roles);
+
             client.setShop(shop);
             clientRepository.save(client);
-        }
 
-        shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
+            admins.add(client);
+        }
+        shop.setAdmins(admins);
 
         List<ClientShopAdminViewDTO> shopAdminViewDTOList = new ArrayList<>();
         for (Client client : shop.getAdmins()) {

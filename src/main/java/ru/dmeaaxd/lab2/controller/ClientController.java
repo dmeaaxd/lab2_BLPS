@@ -2,12 +2,11 @@ package ru.dmeaaxd.lab2.controller;
 
 import lombok.AllArgsConstructor;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import ru.dmeaaxd.lab2.dto.client.RegisterDTO;
 import ru.dmeaaxd.lab2.service.ClientService;
 
@@ -31,4 +30,17 @@ public class ClientController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
+    @PostMapping("set_system_admin")
+    public ResponseEntity<?> setAdmin(@RequestParam Long id) {
+        Map<String, String> response = new HashMap<>();
+        try{
+            return new ResponseEntity<>(clientService.setAdmin(id), HttpStatus.OK);
+        } catch (ObjectNotFoundException e){
+            response.put("error", "Пользователь не найден");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
