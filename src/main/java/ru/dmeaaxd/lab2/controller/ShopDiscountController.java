@@ -46,6 +46,7 @@ public class ShopDiscountController {
     public ResponseEntity<?> create(@PathVariable Long shopId,
                                     @RequestBody DiscountDTO discountDTO,
                                     @RequestHeader(value = "Auth", required = false) Long clientId) {
+
         Map<String, String> response = new HashMap<>();
 
         if (clientId == null) {
@@ -62,6 +63,7 @@ public class ShopDiscountController {
                 response.put("error", "Такого предложения нет");
             }
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
         } catch (IllegalAccessException illegalAccessException){
             response.put("error", illegalAccessException.getMessage());
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
