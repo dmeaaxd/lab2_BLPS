@@ -52,7 +52,7 @@ public class ClientService {
         Client resultClient = clientRepository.save(client);
         return ClientDTO.builder()
                 .username(resultClient.getUsername())
-                .email(resultClient.getUsername())
+                .email(resultClient.getEmail())
                 .roles(resultClient.getRoles())
                 .build();
     }
