@@ -30,4 +30,5 @@ public class Shop {
 
     @OneToMany(mappedBy = "shop")
     private List<Client> admins; // Администраторы магазина
+
 }
