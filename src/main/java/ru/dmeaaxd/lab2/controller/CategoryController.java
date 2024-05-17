@@ -64,7 +64,7 @@ public class CategoryController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.put("error", e + categoryDTORequest.getName());
+            response.put("error", e.getMessage() + id);
             return new ResponseEntity<>(response, HttpStatus.ALREADY_REPORTED);
         }
     }

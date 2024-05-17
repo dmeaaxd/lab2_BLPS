@@ -23,6 +23,9 @@ public class BillService {
         String username = auth.getName();
         Client client = clientRepository.findByUsername(username);
         Bill bill = client.getAccountBill();
+        if (bill == null){
+            throw new Exception("Для данного пользователя нет созданного счета");
+        }
         return bill.getAccountBill();
     }
 
@@ -35,7 +38,7 @@ public class BillService {
         // Если счет не существует, создаем новую запись
         if (bill == null) {
             bill = new Bill();
-            bill.setClient(client);
+            client.setAccountBill(bill);
             bill.setAccountBill(amount);
         } else {
             int currentBalance = bill.getAccountBill();

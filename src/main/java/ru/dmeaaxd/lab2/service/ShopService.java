@@ -127,7 +127,7 @@ public class ShopService {
     }
 
     @Transactional(rollbackFor = {IllegalArgumentException.class, ObjectNotFoundException.class})
-    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException {
+    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException, IllegalArgumentException{
 
         if (shopRepository.existsByName(shopDTO.getName())) {
             throw new IllegalArgumentException("Магазин с таким именем уже существует");

@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/**"))
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(new AntPathRequestMatcher("/auth/register")).permitAll())
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/shop/**").permitAll())
+                .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/category/**").permitAll())
                 .authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/shop_discounts/**").permitAll())
                 .authorizeHttpRequests((requests) -> requests.anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

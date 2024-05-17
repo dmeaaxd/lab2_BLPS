@@ -1,5 +1,6 @@
 package ru.dmeaaxd.lab2.controller;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,9 +31,19 @@ public class ShopController {
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(required = false) List<Integer> categories,
                                     @RequestParam(required = false) String sort,
-                                    @RequestParam(required = false) Integer page) {
+                                    @RequestParam(required = false) String page) {
+
         Map<String, String> response = new HashMap<>();
-        ValidationResult validationResult = shopValidator.validateGetAllRequest(categories, sort, page);
+        Integer intPage;
+        try {
+            intPage = (page == null) ? null : Integer.parseInt(page);
+        } catch (NumberFormatException numberFormatException){
+            response.put("error", "Параметр page задан неверно");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+
+        ValidationResult validationResult = shopValidator.validateGetAllRequest(categories, sort, intPage);
         if (!validationResult.isCorrect()){
             if (Objects.equals(validationResult.getMessage(), HttpStatus.NOT_FOUND.toString())) {
                 response.put("error", "Данная страница не найдена");
@@ -44,7 +55,7 @@ public class ShopController {
             }
         }
 
-        return new ResponseEntity<>(shopService.getAll(categories, sort, page), HttpStatus.OK);
+        return new ResponseEntity<>(shopService.getAll(categories, sort, intPage), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -74,6 +85,9 @@ public class ShopController {
         } catch (ObjectNotFoundException exception) {
             response.put("error", "Такой категории нет (id=" + exception.getIdentifier() + ")");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException illegalArgumentException){
+            response.put("error", illegalArgumentException.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -98,8 +112,11 @@ public class ShopController {
             response.put("id", String.valueOf(shopService.update(id, shopDTO).getId()));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ObjectNotFoundException exception) {
-            response.put("error", "Такой категории нет" + exception.getMessage());
+            response.put("error", "Объекта " + exception.getEntityName() + "с идентификатором " + exception.getIdentifier() + " нет");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException illegalArgumentException){
+            response.put("error", illegalArgumentException.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 

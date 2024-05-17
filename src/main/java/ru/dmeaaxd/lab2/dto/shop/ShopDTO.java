@@ -16,6 +16,7 @@ public class ShopDTO {
     public boolean antiCheckerRegister() {
         if (name == null || name.isEmpty()) return true;
         if (description == null || description.isEmpty()) return true;
+        if (categoryId == null) return true;
         return false;
     }
 }

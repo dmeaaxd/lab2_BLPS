@@ -18,6 +18,5 @@ public class GlobalExceptionHandler {
         response.put("error", "Запрос содержит неопознанные параметры");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
 }
 
