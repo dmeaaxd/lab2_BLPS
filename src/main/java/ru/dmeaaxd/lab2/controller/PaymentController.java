@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.dmeaaxd.lab2.dto.PaymentDTO;
 import ru.dmeaaxd.lab2.service.BillService;
+import ru.dmeaaxd.lab2.validators.ValidationResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +35,17 @@ public class PaymentController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/topUp")
-    public ResponseEntity<?> topUp(@RequestParam int amount) {
+    public ResponseEntity<?> topUp(@RequestBody PaymentDTO paymentDTO) {
         Map<String, String> response = new HashMap<>();
+
+        ValidationResult validationResult = paymentDTO.validate();
+        if (!validationResult.isCorrect()){
+            response.put("error", validationResult.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
         try {
-            response.put("billAmount", String.valueOf(billService.topUp(amount)));
+            response.put("billAmount", String.valueOf(billService.topUp(paymentDTO.getAmount())));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             response.put("error", e.getMessage());

@@ -1,11 +1,12 @@
 package ru.dmeaaxd.lab2.dto.shop;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ShopDTO {
     private String name;

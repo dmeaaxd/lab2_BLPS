@@ -126,7 +126,7 @@ public class ShopService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {IllegalArgumentException.class, ObjectNotFoundException.class})
     public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException {
 
         if (shopRepository.existsByName(shopDTO.getName())) {

@@ -59,9 +59,4 @@ public class TransactionConfig {
         return jtaTransactionManager;
     }
 
-    @Bean
-    public PlatformTransactionManager platformTransactionManager() throws SystemException {
-        return transactionManager();
-    }
-
 }

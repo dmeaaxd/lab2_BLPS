@@ -1,11 +1,11 @@
 package ru.dmeaaxd.lab2.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SubscriptionDTO {
     private Long clientId;
     private Long shopId;
