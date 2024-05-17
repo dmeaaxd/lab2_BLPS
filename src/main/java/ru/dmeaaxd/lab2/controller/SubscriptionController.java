@@ -32,24 +32,27 @@ public class SubscriptionController {
         Long shopId = subscriptionRequestDTO.getShopId();
         int duration = subscriptionRequestDTO.getDuration();
 
+        Map<String, String> response = new HashMap<>();
         if (subscriptionRequestDTO.antiChecker()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
+            response.put("error", "Переданы неверные параметры");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         SubscriptionDTO subscribe = null;
         try {
             subscribe = subscriptionService.subscribe(shopId, duration);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, String> response = new HashMap<>();
-        if (subscribe != null) {
-            response.put("message", "Подписка на магазин: " + shopId + " для клиента оформлена/продлена на " + duration);
-        } else {
+
+        if (subscribe == null) {
             response.put("error", "У клиента недостаточно средств");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
 
+        response.put("message", "Подписка на магазин " + shopId + " для клиента оформлена/продлена на " + duration + " дней");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -15,6 +15,7 @@ public class SubscriptionRequestDTO {
 
     public boolean antiChecker() {
         if (shopId == null ) return true;
+        if (duration <= 0) return true;
         return false;
     }
 

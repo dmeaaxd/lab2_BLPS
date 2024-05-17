@@ -49,7 +49,7 @@ public class SubscriptionService {
 
         Optional<Shop> optionalShop = shopRepository.findById(shopId);
         if (optionalShop.isEmpty()) {
-            throw new Exception("Магазин: " + shopId + " не найден");
+            throw new Exception("Магазин " + shopId + " не найден");
         }
 
         Shop shop = optionalShop.get();
@@ -90,6 +90,7 @@ public class SubscriptionService {
         for (Subscription subscription : subscriptionList) {
             subscriptionDTOList.add(SubscriptionDTO.builder()
                     .clientId(subscription.getClient().getId())
+                    .duration(subscription.getDuration())
                     .shopId(subscription.getShop().getId())
                     .build());
         }
