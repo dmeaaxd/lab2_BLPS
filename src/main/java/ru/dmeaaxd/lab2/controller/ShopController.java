@@ -6,19 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.collectors.ShopCollector;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
-import ru.dmeaaxd.lab2.dto.shop.ShopFilters;
-import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
-import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.service.ShopService;
 import ru.dmeaaxd.lab2.validators.ShopValidator;
 import ru.dmeaaxd.lab2.validators.ValidationResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/shop")
@@ -27,23 +23,28 @@ public class ShopController {
 
     private final ShopService shopService;
     private final ShopValidator shopValidator;
-    private final ShopCollector shopCollector;
 
     // TODO: Добавить фильтрацию, сортивка, пагинация
     // URL запроса: shop?categories=1,2,3&sort=asc|desc&page=10
     // page нумеруется, начиная с 1. Если page не задан, выведутся все значения
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam Map<String, String> allParams) {
+    public ResponseEntity<?> getAll(@RequestParam(required = false) List<Integer> categories,
+                                    @RequestParam(required = false) String sort,
+                                    @RequestParam(required = false) Integer page) {
         Map<String, String> response = new HashMap<>();
-
-        ValidationResult validationResult = shopValidator.getAllRequestIsCorrect(allParams);
+        ValidationResult validationResult = shopValidator.validateGetAllRequest(categories, sort, page);
         if (!validationResult.isCorrect()){
-            response.put("error", validationResult.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            if (Objects.equals(validationResult.getMessage(), HttpStatus.NOT_FOUND.toString())) {
+                response.put("error", "Данная страница не найдена");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+            else {
+                response.put("error", validationResult.getMessage());
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
         }
 
-        ShopFilters filters = shopCollector.collectFilters(allParams);
-        return new ResponseEntity<>(shopService.getAll(filters), HttpStatus.OK);
+        return new ResponseEntity<>(shopService.getAll(categories, sort, page), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

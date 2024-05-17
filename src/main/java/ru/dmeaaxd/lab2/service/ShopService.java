@@ -7,13 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
 import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
-import ru.dmeaaxd.lab2.dto.shop.ShopFilters;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetCurrentViewDTO;
 import ru.dmeaaxd.lab2.entity.Category;
 import ru.dmeaaxd.lab2.entity.Discount;
 import ru.dmeaaxd.lab2.entity.Shop;
-import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.repository.CategoryRepository;
 import ru.dmeaaxd.lab2.repository.ClientRepository;
 import ru.dmeaaxd.lab2.repository.DiscountRepository;
@@ -36,49 +34,56 @@ public class ShopService {
 
 
 
-    public List<ShopGetAllViewDTO> getAll(ShopFilters filters) {
+    public List<ShopGetAllViewDTO> getAll(List<Integer> categories, String sortString, Integer page) {
         List<ShopGetAllViewDTO> shopGetAllViewDTOList = new ArrayList<>();
         List<Shop> shops = shopRepository.findAll();
 
-        // Обработка фильтра page
-        int min_index = 0;
-        int max_index = shops.size();
-        if (filters.getPage() != -1){
-            min_index = shopRepository.PAGE_SIZE * (filters.getPage() - 1);
-            max_index = Math.min(shopRepository.PAGE_SIZE * filters.getPage(), shops.size());
-        }
-
-        // Обработка фильтра categories
+        // Фильтрация магазинов
         List<Category> allowCategories = new ArrayList<>();
-        if (!filters.getCategories().isEmpty()) {
-            for (int categoryId : filters.getCategories()) {
+        if (categories != null) {
+            for (int categoryId : categories) {
                 allowCategories.add(categoryRepository.findById((long) categoryId).orElseThrow(() -> new ObjectNotFoundException(categoryId, "Категория")));
             }
         }
 
-        // Фильтрация магазинов
         List<Shop> filteredShops = new ArrayList<>();
-        for (int i = min_index; i < max_index; i++){
-            Shop shop = shops.get(i);
-            if (!allowCategories.isEmpty() && !allowCategories.contains(shop.getCategory())){
-                continue;
+        for (Shop shop : shops){
+            if (allowCategories.isEmpty() || allowCategories.contains(shop.getCategory())) {
+                filteredShops.add(shop);
             }
-            filteredShops.add(shop);
         }
 
         // Сортировка магазинов
-        if (filters.getSort() == Sort.ASC){
-            filteredShops.sort(new ShopComparator());
-        }
-        else {
-            if (filters.getSort() == Sort.DESC) {
+        if (sortString != null){
+            Sort sort = Sort.parseSort(sortString);
+            if (sort == Sort.ASC){
                 filteredShops.sort(new ShopComparator());
-                Collections.reverse(filteredShops);
+            }
+            else {
+                if (sort == Sort.DESC) {
+                    filteredShops.sort(new ShopComparator());
+                    Collections.reverse(filteredShops);
+                }
             }
         }
 
+
+        // Пагинация
+        int min_index = 0;
+        int max_index = filteredShops.size();
+        if (page != null){
+            min_index = shopRepository.PAGE_SIZE * (page - 1);
+            max_index = Math.min(shopRepository.PAGE_SIZE * page, filteredShops.size());
+        }
+
+        List<Shop> resultShops = new ArrayList<>();
+        for (int i = min_index; i < max_index; i++){
+            resultShops.add(filteredShops.get(i));
+        }
+
+
         // Вывод в виде DTO
-        for (Shop shop : filteredShops){
+        for (Shop shop : resultShops){
             Category category = shop.getCategory();
 
             CategoryDTORequest categoryDTORequest = CategoryDTORequest.builder()
