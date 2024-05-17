@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.dmeaaxd.lab2.dto.DiscountDTO;
-import ru.dmeaaxd.lab2.service.ShopAdminsService;
+import ru.dmeaaxd.lab2.dto.discounts.DiscountDTO;
 import ru.dmeaaxd.lab2.service.ShopDiscountService;
 
 import java.util.HashMap;
@@ -81,7 +80,7 @@ public class ShopDiscountController {
     }
 
     @PreAuthorize("hasAuthority('SHOP_ADMIN')")
-    @DeleteMapping("/{shopId}/{discountId}/delete")
+    @DeleteMapping("/{shopId}/{discountId}")
     public ResponseEntity<?> delete(@PathVariable Long shopId,
                                     @PathVariable Long discountId){
         Map<String, String> response = new HashMap<>();

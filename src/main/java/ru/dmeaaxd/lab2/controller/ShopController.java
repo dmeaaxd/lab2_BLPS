@@ -64,7 +64,7 @@ public class ShopController {
 
         try {
             return new ResponseEntity<>(shopService.getCurrent(id), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (ObjectNotFoundException e) {
             response.put("error", "Такого магазина нет");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }

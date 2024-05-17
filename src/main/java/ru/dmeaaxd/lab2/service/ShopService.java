@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.dmeaaxd.lab2.dto.DiscountDTO;
 import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
+import ru.dmeaaxd.lab2.dto.discounts.DiscountInListDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetCurrentViewDTO;
@@ -33,7 +33,6 @@ public class ShopService {
     private final CategoryRepository categoryRepository;
 
 
-
     public List<ShopGetAllViewDTO> getAll(List<Integer> categories, String sortString, Integer page) {
         List<ShopGetAllViewDTO> shopGetAllViewDTOList = new ArrayList<>();
         List<Shop> shops = shopRepository.findAll();
@@ -47,19 +46,18 @@ public class ShopService {
         }
 
         List<Shop> filteredShops = new ArrayList<>();
-        for (Shop shop : shops){
+        for (Shop shop : shops) {
             if (allowCategories.isEmpty() || allowCategories.contains(shop.getCategory())) {
                 filteredShops.add(shop);
             }
         }
 
         // Сортировка магазинов
-        if (sortString != null){
+        if (sortString != null) {
             Sort sort = Sort.parseSort(sortString);
-            if (sort == Sort.ASC){
+            if (sort == Sort.ASC) {
                 filteredShops.sort(new ShopComparator());
-            }
-            else {
+            } else {
                 if (sort == Sort.DESC) {
                     filteredShops.sort(new ShopComparator());
                     Collections.reverse(filteredShops);
@@ -71,19 +69,19 @@ public class ShopService {
         // Пагинация
         int min_index = 0;
         int max_index = filteredShops.size();
-        if (page != null){
+        if (page != null) {
             min_index = shopRepository.PAGE_SIZE * (page - 1);
             max_index = Math.min(shopRepository.PAGE_SIZE * page, filteredShops.size());
         }
 
         List<Shop> resultShops = new ArrayList<>();
-        for (int i = min_index; i < max_index; i++){
+        for (int i = min_index; i < max_index; i++) {
             resultShops.add(filteredShops.get(i));
         }
 
 
         // Вывод в виде DTO
-        for (Shop shop : resultShops){
+        for (Shop shop : resultShops) {
             Category category = shop.getCategory();
 
             CategoryDTORequest categoryDTORequest = CategoryDTORequest.builder()
@@ -100,13 +98,15 @@ public class ShopService {
         return shopGetAllViewDTOList;
     }
 
-    public ShopGetCurrentViewDTO getCurrent(Long id) throws Exception {
+    @Transactional
+    public ShopGetCurrentViewDTO getCurrent(Long id) throws ObjectNotFoundException {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
 
         List<Discount> discounts = shop.getDiscounts();
-        List<DiscountDTO> discountDTOList = new ArrayList<>();
+        List<DiscountInListDTO> discountDTOList = new ArrayList<>();
         for (Discount discount : discounts) {
-            discountDTOList.add(DiscountDTO.builder()
+            discountDTOList.add(DiscountInListDTO.builder()
+                    .id(discount.getId())
                     .title(discount.getTitle())
                     .description(discount.getDescription())
                     .promoCode(discount.getPromoCode())
@@ -127,7 +127,7 @@ public class ShopService {
     }
 
     @Transactional(rollbackFor = {IllegalArgumentException.class, ObjectNotFoundException.class})
-    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException, IllegalArgumentException{
+    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException, IllegalArgumentException {
 
         if (shopRepository.existsByName(shopDTO.getName())) {
             throw new IllegalArgumentException("Магазин с таким именем уже существует");
