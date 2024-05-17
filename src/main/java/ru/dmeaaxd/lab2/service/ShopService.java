@@ -77,7 +77,13 @@ public class ShopService {
 
     @Transactional
     public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException {
-        Category category = categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория"));
+
+        if (shopRepository.existsByName(shopDTO.getName())) {
+            throw new IllegalArgumentException("Магазин с таким именем уже существует");
+        }
+
+        Category category = categoryRepository.findById(shopDTO.getCategoryId())
+                .orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория"));
 
         Shop newShop = Shop.builder()
                 .name(shopDTO.getName())
@@ -90,6 +96,11 @@ public class ShopService {
 
     public Shop update(Long id, ShopDTO shopDTO) throws ObjectNotFoundException {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
+
+        if (shopRepository.existsByNameAndIdNot(shopDTO.getName(), id)) {
+            throw new IllegalArgumentException("Магазин с таким именем уже существует");
+        }
+
         shop.setName(shopDTO.getName());
         shop.setDescription(shopDTO.getDescription());
         shop.setCategory(categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория")));
