@@ -94,14 +94,9 @@ public class ShopController {
     @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestBody ShopDTO shopDTO,
-                                    @RequestHeader(value = "Auth", required = false) Long clientId) {
+                                    @RequestBody ShopDTO shopDTO) {
 
         Map<String, String> response = new HashMap<>();
-
-        if (clientId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
         if (shopDTO.antiCheckerRegister()) {
             response.put("error", "Переданы неверные параметры в запросе");

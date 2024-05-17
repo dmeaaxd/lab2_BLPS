@@ -28,23 +28,20 @@ public class FavoriteController {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/add")
-    public ResponseEntity<?> favoriteShop(@RequestBody FavoritesRequestDTO favoritesRequestDTO) {
-
-        if (favoritesRequestDTO.antiChecker()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Переданы неверные параметры в запросе");
-        }
+    @PostMapping("/add/{shopId}")
+    public ResponseEntity<?> favoriteShop(@PathVariable Long shopId) {
 
         Favorite favorite = null;
+        Map<String, String> response = new HashMap<>();
         try {
-            favorite = favoriteService.add(favoritesRequestDTO.getShopId());
+            favorite = favoriteService.add(shopId);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Клиент или магазин не найден");
+            response.put("message", "Магазин " + shopId + " не найден");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-        Map<String, String> response = new HashMap<>();
         if (favorite != null) {
-            response.put("message", "Магазин: " + favoritesRequestDTO.getShopId() + " добавлен в избранное для клиента");
+            response.put("message", "Магазин: " + shopId + " добавлен в избранное для клиента");
         } else {
             response.put("error", "Магазин уже добавлен в избранное для клиента");
         }
@@ -53,8 +50,8 @@ public class FavoriteController {
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/{id}/remove")
-    public ResponseEntity<?> remove(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         Map<String, String> response = new HashMap<>();
 
         try {
@@ -62,7 +59,7 @@ public class FavoriteController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.put("error", "Магазина с данным ID не существует: " + id);
+            response.put("error", "Объекта Избранное с данным ID не существует: " + id);
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }

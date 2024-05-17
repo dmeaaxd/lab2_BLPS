@@ -58,9 +58,10 @@ public class FavoriteService {
         List<FavoriteDTO> favoriteDTOList = new ArrayList<>();
         for (Favorite favorite : favoriteList) {
             favoriteDTOList.add(FavoriteDTO.builder()
-                    .clientId(favorite.getClient().getId())
-                    .shopId(favorite.getShop().getId())
-                    .build());
+                            .id(favorite.getId())
+                            .clientId(favorite.getClient().getId())
+                            .shopId(favorite.getShop().getId())
+                            .build());
         }
 
         return favoriteDTOList;
