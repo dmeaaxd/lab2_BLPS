@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.dmeaaxd.lab2.dto.ShopAdminsDTO;
 import ru.dmeaaxd.lab2.service.ShopAdminsService;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class ShopAdminsController {
     private final ShopAdminsService shopAdminsService;
 
     @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
-    @GetMapping("/{id}/")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getShopAdmins(@PathVariable Long id) {
         Map<String, String> response = new HashMap<>();
         try {
@@ -34,7 +35,9 @@ public class ShopAdminsController {
     @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PostMapping("/{id}/update")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestParam List<Long> admins) {
+                                    @RequestBody ShopAdminsDTO adminsDTO) {
+        List<Long> admins = adminsDTO.getAdmins();
+
         Map<String, String> response = new HashMap<>();
         try {
             return new ResponseEntity<>(shopAdminsService.updateShopAdmins(id, admins), HttpStatus.OK);

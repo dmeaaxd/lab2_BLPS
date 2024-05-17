@@ -1,4 +1,4 @@
-package ru.dmeaaxd.lab2.dto;
+package ru.dmeaaxd.lab2.dto.payment;
 
 
 import lombok.AllArgsConstructor;
