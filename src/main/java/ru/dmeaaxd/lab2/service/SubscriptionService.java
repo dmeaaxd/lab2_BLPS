@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.dmeaaxd.lab2.dto.SubscriptionDTO;
 import ru.dmeaaxd.lab2.entity.Bill;
-import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.entity.Shop;
 import ru.dmeaaxd.lab2.entity.Subscription;
+import ru.dmeaaxd.lab2.entity.auth.Client;
 import ru.dmeaaxd.lab2.repository.BillRepository;
 import ru.dmeaaxd.lab2.repository.ClientRepository;
 import ru.dmeaaxd.lab2.repository.ShopRepository;
@@ -29,11 +29,23 @@ public class SubscriptionService {
     private final BillRepository billRepository;
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public SubscriptionDTO subscribe(Long shopId, int duration) throws Exception {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         Client client = clientRepository.findByUsername(username);
+
+        Bill bill = client.getAccountBill();
+
+        int totalPrice = duration * 10;
+        if (bill.getAccountBill() >= totalPrice) {
+            bill.setAccountBill(bill.getAccountBill() - totalPrice);
+            billRepository.save(bill);
+        } else {
+            return null;
+        }
+
 
         Optional<Shop> optionalShop = shopRepository.findById(shopId);
         if (optionalShop.isEmpty()) {
@@ -41,7 +53,7 @@ public class SubscriptionService {
         }
 
         Shop shop = optionalShop.get();
-        Bill bill = client.getAccountBill();
+
 
         Subscription existingSubscription = subscriptionRepository.findByClientAndShop(client, shop);
         if (existingSubscription != null) {
@@ -54,13 +66,6 @@ public class SubscriptionService {
                     .build();
         }
 
-        int totalPrice = duration * 10;
-        if (bill.getAccountBill() >= totalPrice) {
-            bill.setAccountBill(bill.getAccountBill() - totalPrice);
-            billRepository.save(bill);
-        } else {
-            return null;
-        }
 
         subscriptionRepository.save(existingSubscription);
 
@@ -71,6 +76,7 @@ public class SubscriptionService {
                 .build();
 
         return subscriptionDTO;
+
     }
 
 
@@ -83,9 +89,9 @@ public class SubscriptionService {
         List<SubscriptionDTO> subscriptionDTOList = new ArrayList<>();
         for (Subscription subscription : subscriptionList) {
             subscriptionDTOList.add(SubscriptionDTO.builder()
-                        .clientId(subscription.getClient().getId())
-                        .shopId(subscription.getShop().getId())
-                        .build());
+                    .clientId(subscription.getClient().getId())
+                    .shopId(subscription.getShop().getId())
+                    .build());
         }
 
         return subscriptionDTOList;

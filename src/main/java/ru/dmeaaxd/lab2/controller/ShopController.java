@@ -91,7 +91,7 @@ public class ShopController {
         try {
             shopService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ObjectNotFoundException exception) {
+        } catch (Exception exception) {
             response.put("error", "Такого магазина нет");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }

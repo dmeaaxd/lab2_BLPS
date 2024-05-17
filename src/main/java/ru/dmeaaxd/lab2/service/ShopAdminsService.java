@@ -39,7 +39,7 @@ public class ShopAdminsService {
         return shopAdminViewDTOList;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<ClientShopAdminViewDTO> updateShopAdmins(Long id, List<Long> clients) throws Exception {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
 

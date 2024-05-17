@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 import ru.dmeaaxd.lab2.dto.DiscountDTO;
+import ru.dmeaaxd.lab2.dto.category.CategoryDTORequest;
 import ru.dmeaaxd.lab2.dto.shop.ShopDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetAllViewDTO;
 import ru.dmeaaxd.lab2.dto.shop.ShopGetCurrentViewDTO;
@@ -33,18 +33,18 @@ public class ShopService {
     public List<ShopGetAllViewDTO> getAll() {
         List<ShopGetAllViewDTO> shopGetAllViewDTOList = new ArrayList<>();
 
-        for (Shop shop : shopRepository.findAll()){
+        for (Shop shop : shopRepository.findAll()) {
             Category category = shop.getCategory();
             CategoryDTORequest categoryDTORequest = CategoryDTORequest.builder()
                     .name(category.getName())
                     .build();
 
             shopGetAllViewDTOList.add(ShopGetAllViewDTO.builder()
-                            .id(shop.getId())
-                            .name(shop.getName())
-                            .description(shop.getDescription())
-                            .category(categoryDTORequest)
-                            .build());
+                    .id(shop.getId())
+                    .name(shop.getName())
+                    .description(shop.getDescription())
+                    .category(categoryDTORequest)
+                    .build());
         }
         return shopGetAllViewDTOList;
     }
@@ -54,7 +54,7 @@ public class ShopService {
 
         List<Discount> discounts = shop.getDiscounts();
         List<DiscountDTO> discountDTOList = new ArrayList<>();
-        for (Discount discount : discounts){
+        for (Discount discount : discounts) {
             discountDTOList.add(DiscountDTO.builder()
                     .title(discount.getTitle())
                     .description(discount.getDescription())
@@ -76,7 +76,7 @@ public class ShopService {
     }
 
     @Transactional
-    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException{
+    public Shop create(ShopDTO shopDTO) throws ObjectNotFoundException {
         Category category = categoryRepository.findById(shopDTO.getCategoryId()).orElseThrow(() -> new ObjectNotFoundException(shopDTO.getCategoryId(), "Категория"));
 
         Shop newShop = Shop.builder()
@@ -97,15 +97,17 @@ public class ShopService {
         return shopRepository.save(shop);
     }
 
-    @Transactional
-    public void delete(Long id) throws ObjectNotFoundException {
+    @Transactional(rollbackFor = ObjectNotFoundException.class)
+    public String delete(Long id) throws Exception {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(id, "Магазин"));
-        for (Client admin : shop.getAdmins()){
-            clientRepository.delete(admin);
+        try {
+            clientRepository.deleteAll(shop.getAdmins());
+            discountRepository.deleteAll(shop.getDiscounts());
+        } catch (Exception e) {
+            throw new Exception("Админы или Предложения не найдены");
         }
-        for (Discount discount : shop.getDiscounts()){
-            discountRepository.delete(discount);
-        }
+
         shopRepository.deleteById(id);
+        return "deleted";
     }
 }
